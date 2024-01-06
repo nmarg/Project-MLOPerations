@@ -1,12 +1,38 @@
 import csv
+import math
 from pathlib import Path
 from typing import List
 
 import numpy as np
 import torchvision
 from PIL import Image
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
+from torchvision import transforms
 from transformers import TensorType, ViTImageProcessor
+
+MAX_DATASET_LENGTH = 202599
+
+
+class CustomImageDataset(Dataset):
+    def __init__(self, images: np.ndarray, labels: np.ndarray):
+        """Custom dataset that loads images and labels, then returns them on demand into a DataLoader.
+        Outputs a tuple with the format (label, image) in each output.
+
+        :param image_paths: Paths to the images to be loaded (not directories, specific file paths!)
+        :param label_rows: Rows from the label.csv file that correspond to the loaded images
+        """
+        self.images = images
+        self.labels = labels
+        self.transform = transforms.ToTensor()
+
+    def __len__(self):
+        return len(self.images)
+
+    def __getitem__(self, idx):
+        image = Image.open(self.images[idx])
+        image = self.transform(image)
+        label = self.labels[idx]
+        return (label, image)
 
 
 class CelebADataModule:
@@ -32,6 +58,7 @@ class CelebADataModule:
         self.processed_labels_path = Path.joinpath(
             self.processed_data_dir, "labels.csv"
         )
+        self.processed_images_path = Path.joinpath(self.processed_data_dir, "images/")
         self.batch_size = batch_size
 
     def setup(self, use_portion_of_dataset=1.0, train_val_test_split=[0.6, 0.2, 0.2]):
@@ -48,18 +75,66 @@ class CelebADataModule:
         :param train_val_test_split: how to split training, validation
         and test data if use_percent_of_dataset != 1.0, defaults to [0.6, 0.2, 0.2]
         """
-        # Load attribute names
+        # Load attribute names, labels & image paths
         self.attributenames = np.loadtxt(
             self.processed_attributes_path, dtype=str, delimiter=","
         )
-
-        # Load labels
         labels = np.genfromtxt(
             self.processed_labels_path,
             delimiter=",",
         )
+        images = sorted((self.processed_images_path).glob("*.jpg"))
 
-        # Load images
+        # Calculate portion & splits of dataset
+        available_data = math.floor(len(images) * use_portion_of_dataset)
+        images = images[:available_data]
+        train_idx = [
+            162770
+            if use_portion_of_dataset == 1.0 and len(images) == MAX_DATASET_LENGTH
+            else math.floor(available_data * train_val_test_split[0])
+        ]
+        val_idx = [
+            182637
+            if use_portion_of_dataset == 1.0 and len(images) == MAX_DATASET_LENGTH
+            else math.floor(
+                available_data * (train_val_test_split[0] + train_val_test_split[1])
+            )
+        ]
+        print(
+            f"Splitting train/val/test as: [{train_idx[0]}, {val_idx[0]-train_idx[0]}, {len(images)-val_idx[0]}]"
+        )
+
+        # Create datasets based on splits
+        self.train_dataset = CustomImageDataset(
+            images[: train_idx[0]], labels[: train_idx[0]]
+        )
+        self.val_dataset = CustomImageDataset(
+            images[train_idx[0] : val_idx[0]], labels[train_idx[0] : val_idx[0]]
+        )
+        self.test_dataset = CustomImageDataset(
+            images[val_idx[0] :], labels[val_idx[0] :]
+        )
+
+    def train_dataloader(self):
+        """Return a train dataloader with the requested split specified in self.setup()
+
+        :return: a DataLoader object with the train data as (label, image)
+        """
+        return DataLoader(self.train_dataset, batch_size=self.batch_size)
+
+    def val_dataloader(self):
+        """Return the evaluation set dataloader with the requested split specified in self.setup()
+
+        :return: a DataLoader object with the val data as (label, image)
+        """
+        return DataLoader(self.val_dataset, batch_size=self.batch_size)
+
+    def test_dataloader(self):
+        """Return a test dataloader with the requested split specified in self.setup()
+
+        :return: a DataLoader object with the test data as (label, image)
+        """
+        return DataLoader(self.test_dataset, batch_size=self.batch_size)
 
     def process_data(self, reduced=False):
         """Process images in the raw_data_dir directory and output them into
@@ -111,24 +186,10 @@ class CelebADataModule:
             )
             torchvision.utils.save_image(
                 image_tensor["pixel_values"],
-                Path.joinpath(
-                    self.processed_data_dir, "images/", f"image_{raw_image_id}.jpg"
-                ),
+                Path.joinpath(self.processed_images_path, f"image_{raw_image_id}.jpg"),
             )
 
         print("Successfully processed all images.")
-
-    # def train_dataloader(self):
-    #     return DataLoader(self.mnist_train, batch_size=self.batch_size)
-
-    # def val_dataloader(self):
-    #     return DataLoader(self.mnist_val, batch_size=self.batch_size)
-
-    # def test_dataloader(self):
-    #     return DataLoader(self.mnist_test, batch_size=self.batch_size)
-
-    # def predict_dataloader(self):
-    #     return DataLoader(self.mnist_predict, batch_size=self.batch_size)
 
     def attribute_names(self) -> List[str]:
         """Return the attribute names of the image labels.
@@ -137,8 +198,19 @@ class CelebADataModule:
         """
         return self.attributenames
 
+    def show_examples(self):
+        print(self.train_dataset[0])
+
 
 if __name__ == "__main__":
+    # Usage: Process Data
     datamodule = CelebADataModule()
-    datamodule.process_data(reduced=True)
+    datamodule.process_data(
+        reduced=False
+    )  # Change reduced=True to process only 5k images
+
+    # Usage: Load Data & Get Dataloaders
     datamodule.setup()
+    trainloader = datamodule.train_dataloader()
+    valloader = datamodule.val_dataloader()
+    testloader = datamodule.test_dataloader()
