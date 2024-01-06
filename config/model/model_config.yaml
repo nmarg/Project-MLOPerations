@@ -1,0 +1,2 @@
+pretrained_model_path: google/vit-base-patch16-224
+num_labels: 40
