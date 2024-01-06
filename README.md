@@ -1,13 +1,29 @@
-# src
+# Machine Learning Operations project
 
-MLOperations project repo
+Alex Belai s233423 <br/>
+Jan Ljubas s237214 <br/>
+Noa Margeta 232470 <br/>
+Ana Marija Pavičić s232468 <br/>
+Filip Penzar s232452 <br/>
+
+## Project description
+This is a group project for the DTU course Machine Learning Operations [DTU:02476](https://skaftenicki.github.io/dtu_mlops/projects/).
+
+### Goal
+Our project revolves around creating and deploying a Machine Learning model for an Image Classification problem.
+The goal for our model is to classify facial features (e.g. beard, glasses etc.) on images of people.
+
+### Framework
+We used [PyTorch](https://pytorch.org/) to develop our model. Furthermore, we used the [Transformer framework](https://github.com/huggingface/transformers) - the multimodal framework used in various cutting edge technologies. The Transformer framework performs approximately as well as some state-of-the-art Convolutional Neural Network models (CNNs), but requires much less time and computational resources to train.
+
+### Data
+Our dataset for the model is the Kaggle dataset [CelebFaces Attributes](https://www.kaggle.com/datasets/jessicali9530/celeba-dataset/data). It consists of over 200k images of celebrities with 40 binary attribute annotations.
+
+### Model
+The model we chose to fine-tune with our dataset is [Vision Transformer(ViT)](https://huggingface.co/docs/transformers/model_doc/vit), which was pretrained on 14 million images and can classify 1000 different items. We could also have used other ViT-type models, such as [ViTMAE](https://huggingface.co/docs/transformers/model_doc/vit_mae) or [ViTMSN](https://huggingface.co/docs/transformers/model_doc/vit_msn). However, for this project we chose the elementary model.
 
 ## Project structure
-
-The directory structure of the project looks like this:
-
-```txt
-
+```
 ├── Makefile             <- Makefile with convenience commands like `make data` or `make train`
 ├── README.md            <- The top-level README for developers using this project.
 ├── data
@@ -57,7 +73,3 @@ The directory structure of the project looks like this:
 │
 └── LICENSE              <- Open-source license if one is chosen
 ```
-
-Created using [mlops_template](https://github.com/SkafteNicki/mlops_template),
-a [cookiecutter template](https://github.com/cookiecutter/cookiecutter) for getting
-started with Machine Learning Operations (MLOps).
