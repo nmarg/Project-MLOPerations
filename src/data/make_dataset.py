@@ -1,5 +1,6 @@
 import csv
 import math
+import os
 from pathlib import Path
 from typing import List
 
@@ -59,6 +60,7 @@ class CelebADataModule:
             self.processed_data_dir, "labels.csv"
         )
         self.processed_images_path = Path.joinpath(self.processed_data_dir, "images/")
+
         self.batch_size = batch_size
 
     def setup(self, use_portion_of_dataset=1.0, train_val_test_split=[0.6, 0.2, 0.2]):
@@ -167,14 +169,21 @@ class CelebADataModule:
 
         # Process images
         raw_images = sorted(
-            Path.joinpath(self.raw_data_dir, "images_celeba/").glob("*.jpg")
+            Path.joinpath(self.raw_data_dir, "images_celeba").glob("*.jpg")
         )
-
+        if len(raw_images) == 0:
+            raise Exception(
+                f"No images detected in directory {Path.joinpath(self.raw_data_dir, 'images_celeba')}. 
+                Make sure the raw input images are set in the right place."
+            )
         if reduced:  # for debugging, only process 5000 of the available images
             raw_images = raw_images[:5000]
             all_images = 5000
         else:
             all_images = len(raw_images)
+
+        if not self.processed_images_path.exists():
+            self.processed_images_path.mkdir(parents=True)
 
         processor = ViTImageProcessor().from_pretrained("google/vit-base-patch16-224")
         for raw_image_id, raw_image_path in enumerate(raw_images):
