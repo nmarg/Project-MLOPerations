@@ -50,10 +50,10 @@ end of the project.
 
 ### Week 1
 
-* [ ] Create a git repository
-* [ ] Make sure that all team members have write access to the github repository
+* [X] Create a git repository
+* [X] Make sure that all team members have write access to the github repository
 * [ ] Create a dedicated environment for you project to keep track of your packages
-* [ ] Create the initial file structure using cookiecutter
+* [X] Create the initial file structure using cookiecutter
 * [ ] Fill out the `make_dataset.py` file such that it downloads whatever data you need and
 * [ ] Add a model file and a training script and get that running
 * [ ] Remember to fill out the `requirements.txt` file with whatever dependencies that you are using
@@ -105,7 +105,7 @@ end of the project.
 >
 > Answer:
 
---- question 1 fill here ---
+Group 77
 
 ### Question 2
 > **Enter the study number for each member in the group**
@@ -116,7 +116,7 @@ end of the project.
 >
 > Answer:
 
---- question 2 fill here ---
+s232470, s232468, s232452, s233423, s237214
 
 ### Question 3
 > **What framework did you choose to work with and did it help you complete the project?**
