@@ -173,8 +173,7 @@ class CelebADataModule:
         )
         if len(raw_images) == 0:
             raise Exception(
-                f"No images detected in directory {Path.joinpath(self.raw_data_dir, 'images_celeba')}. 
-                Make sure the raw input images are set in the right place."
+                f"No images detected in directory {Path.joinpath(self.raw_data_dir, 'images_celeba')}. Make sure the raw input images are set in the right place."
             )
         if reduced:  # for debugging, only process 5000 of the available images
             raw_images = raw_images[:5000]
