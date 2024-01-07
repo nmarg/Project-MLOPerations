@@ -1,6 +1,7 @@
 import csv
 import math
 import os
+import torch
 from pathlib import Path
 from typing import List
 
@@ -22,8 +23,8 @@ class CustomImageDataset(Dataset):
         :param image_paths: Paths to the images to be loaded (not directories, specific file paths!)
         :param label_rows: Rows from the label.csv file that correspond to the loaded images
         """
-        self.images = images
-        self.labels = labels
+        self.images = images[:500]
+        self.labels = labels[:500]
         self.transform = transforms.ToTensor()
 
     def __len__(self):
@@ -31,7 +32,7 @@ class CustomImageDataset(Dataset):
 
     def __getitem__(self, idx):
         image = Image.open(self.images[idx])
-        image = self.transform(image)
+        image = torch.flatten(self.transform(image))
         label = self.labels[idx]
         return (label, image)
 

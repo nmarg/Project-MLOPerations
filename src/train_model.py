@@ -9,11 +9,7 @@ from transformers import Trainer
 
 datamodule = CelebADataModule()
 
-datamodule.process_data(
-      reduced=True
-   )  # Change reduced=True to process only 5k images
-
-   # Usage: Load Data & Get Dataloaders
+# Usage: Load Data & Get Dataloaders
 datamodule.setup()
 trainloader = datamodule.train_dataloader()
 valloader = datamodule.val_dataloader()
@@ -24,7 +20,6 @@ dataset_dict = DatasetDict({
     'validation': valloader.dataset,
     'test': testloader.dataset
 })
-
 
 def collate_fn(batch):
    images = [item[1] for item in batch]  # Extract images from the batch
@@ -49,28 +44,27 @@ def compute_metrics(p):
 
 from transformers import ViTImageProcessor
 
-model_name_or_path = 'google/vit-base-patch16-224-in21k'
+model_name_or_path = 'google/vit-base-patch16-224'
 processor = ViTImageProcessor.from_pretrained(model_name_or_path)
 
 from transformers import ViTForImageClassification
 
-
 model = ViTForImageClassification.from_pretrained(
     model_name_or_path,
-    num_labels=40
+    num_labels=40,
+    ignore_mismatched_sizes=True
 )
-
 
 training_args = TrainingArguments(
   output_dir="./vit-base-beans",
-  per_device_train_batch_size=16,
+  per_device_train_batch_size=6,
   evaluation_strategy="steps",
-  num_train_epochs=4,
+  num_train_epochs=1,
   fp16=False,
-  save_steps=100,
-  eval_steps=100,
-  logging_steps=10,
-  learning_rate=2e-4,
+  save_steps=1,
+  eval_steps=1,
+  logging_steps=1,
+  learning_rate=0.01,
   save_total_limit=2,
   remove_unused_columns=False,
   push_to_hub=False,
@@ -78,9 +72,8 @@ training_args = TrainingArguments(
   load_best_model_at_end=True,
 )
 
-model_name_or_path = 'google/vit-base-patch16-224-in21k'
+print(dataset_dict["train"])
 
-# print("prepared_ds[train]", type(prepared_ds["train"]))
 trainer = Trainer(
    model=model,
    args=training_args,
@@ -96,6 +89,3 @@ trainer.save_model()
 trainer.log_metrics("train", train_results.metrics)
 trainer.save_metrics("train", train_results.metrics)
 trainer.save_state()
-
-
-
