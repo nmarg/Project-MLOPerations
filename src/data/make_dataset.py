@@ -1,11 +1,11 @@
 import csv
 import math
 import os
-import torch
 from pathlib import Path
 from typing import List
 
 import numpy as np
+import torch
 import torchvision
 from PIL import Image
 from torch.utils.data import DataLoader, Dataset
@@ -26,6 +26,9 @@ class CustomImageDataset(Dataset):
         self.images = images[:500]
         self.labels = labels[:500]
         self.transform = transforms.ToTensor()
+        self.processor = ViTImageProcessor().from_pretrained(
+            "google/vit-base-patch16-224"
+        )
 
     def __len__(self):
         return len(self.images)
@@ -33,6 +36,7 @@ class CustomImageDataset(Dataset):
     def __getitem__(self, idx):
         image = Image.open(self.images[idx])
         image = torch.flatten(self.transform(image))
+        image = self.processor(image)
         label = self.labels[idx]
         return (label, image)
 
