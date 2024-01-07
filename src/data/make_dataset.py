@@ -35,7 +35,7 @@ class CustomImageDataset(Dataset):
 
     def __getitem__(self, idx):
         image = Image.open(self.images[idx])
-        image = torch.flatten(self.transform(image))
+        # image = torch.flatten(self.transform(image))
         image = self.processor(image)
         label = self.labels[idx]
         return (label, image)
