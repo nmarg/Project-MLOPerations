@@ -18,7 +18,7 @@ MAX_DATASET_LENGTH = 202599
 class CustomImageDataset(Dataset):
     def __init__(self, images: np.ndarray, labels: np.ndarray):
         """Custom dataset that loads images and labels, then returns them on demand into a DataLoader.
-        Outputs a tuple with the format (label, image) in each output.
+        Outputs a dict with ["pixel_values": Tensor, "labels": Tensor] in each output.
 
         :param image_paths: Paths to the images to be loaded (not directories, specific file paths!)
         :param label_rows: Rows from the label.csv file that correspond to the loaded images
@@ -34,11 +34,11 @@ class CustomImageDataset(Dataset):
         return len(self.images)
 
     def __getitem__(self, idx):
-        image = Image.open(self.images[idx])
+        sample = Image.open(self.images[idx])
         # image = torch.flatten(self.transform(image))
-        image = self.processor(image)["pixel_values"]
-        label = self.labels[idx]
-        return (label, image)
+        sample = self.processor(sample, return_tensors="pt")
+        sample["labels"] = torch.tensor(self.labels[idx])
+        return sample
 
 
 class CelebADataModule:
