@@ -23,6 +23,8 @@ class CustomImageDataset(Dataset):
         :param image_paths: Paths to the images to be loaded (not directories, specific file paths!)
         :param label_rows: Rows from the label.csv file that correspond to the loaded images
         """
+
+        # TODO: remove the hardcoded [:500]
         self.images = images[:500]
         self.labels = labels[:500]
         self.transform = transforms.ToTensor()
@@ -30,8 +32,10 @@ class CustomImageDataset(Dataset):
             "google/vit-base-patch16-224"
         )
 
+
     def __len__(self):
         return len(self.images)
+
 
     def __getitem__(self, idx):
         sample = Image.open(self.images[idx])
@@ -68,6 +72,7 @@ class CelebADataModule:
 
         self.batch_size = batch_size
 
+
     def setup(self, use_portion_of_dataset=1.0, train_val_test_split=[0.6, 0.2, 0.2]):
         """Setup the data module, loading .jpg images from data/processed/ and splitting
         training, testing, and validation data.
@@ -86,7 +91,7 @@ class CelebADataModule:
         self.attributenames = np.loadtxt(
             self.processed_attributes_path, dtype=str, delimiter=","
         )
-        labels = np.genfromtxt(
+        self.labels = np.genfromtxt(
             self.processed_labels_path,
             delimiter=",",
         )
@@ -113,14 +118,15 @@ class CelebADataModule:
 
         # Create datasets based on splits
         self.train_dataset = CustomImageDataset(
-            images[: train_idx[0]], labels[: train_idx[0]]
+            images[: train_idx[0]], self.labels[: train_idx[0]]
         )
         self.val_dataset = CustomImageDataset(
-            images[train_idx[0] : val_idx[0]], labels[train_idx[0] : val_idx[0]]
+            images[train_idx[0] : val_idx[0]], self.labels[train_idx[0] : val_idx[0]]
         )
         self.test_dataset = CustomImageDataset(
-            images[val_idx[0] :], labels[val_idx[0] :]
+            images[val_idx[0] :], self.labels[val_idx[0] :]
         )
+
 
     def train_dataloader(self):
         """Return a train dataloader with the requested split specified in self.setup()
@@ -129,6 +135,7 @@ class CelebADataModule:
         """
         return DataLoader(self.train_dataset, batch_size=self.batch_size)
 
+
     def val_dataloader(self):
         """Return the evaluation set dataloader with the requested split specified in self.setup()
 
@@ -136,12 +143,14 @@ class CelebADataModule:
         """
         return DataLoader(self.val_dataset, batch_size=self.batch_size)
 
+
     def test_dataloader(self):
         """Return a test dataloader with the requested split specified in self.setup()
 
         :return: a DataLoader object with the test data as (label, image)
         """
         return DataLoader(self.test_dataset, batch_size=self.batch_size)
+
 
     def process_data(self, reduced=False):
         """Process images in the raw_data_dir directory and output them into
@@ -169,6 +178,8 @@ class CelebADataModule:
             delimiter=",",
         )
         labels = labels[:, 1:]  # drop image_id column, now shape [202599, 40]
+        # change all the labels with value -1 to 0
+        labels[labels == -1] = 0
         np.savetxt(self.processed_labels_path, labels, delimiter=",")
         print(f"Successfully saved labels under {self.processed_labels_path}")
 
@@ -204,12 +215,14 @@ class CelebADataModule:
 
         print("Successfully processed all images.")
 
+
     def attribute_names(self) -> List[str]:
         """Return the attribute names of the image labels.
 
         :return: List[str] of attribute names with dimension [40]
         """
         return self.attributenames
+
 
     def show_examples(self):
         print(self.train_dataset[0])
@@ -219,7 +232,7 @@ if __name__ == "__main__":
     # Usage: Process Data
     datamodule = CelebADataModule()
     datamodule.process_data(
-        reduced=False
+        reduced=True
     )  # Change reduced=True to process only 5k images
 
     # Usage: Load Data & Get Dataloaders

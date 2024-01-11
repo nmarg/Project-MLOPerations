@@ -48,7 +48,10 @@ metric = evaluate.load("accuracy", average="micro")
 
 
 def compute_metrics(p):
-    preds = p.predictions.flatten().astype(np.int32).tolist()
+    preds = p.predictions
+    preds[preds > 0] = 1
+    preds[preds <= 0]= 0
+    preds = preds.flatten().astype(np.int32).tolist()
     refs = p.label_ids.flatten().astype(np.int32).tolist()
 
     acc = metric.compute(predictions=preds, references=refs)
@@ -62,14 +65,17 @@ processor = ViTImageProcessor.from_pretrained(model_name_or_path)
 
 
 model = ViTForImageClassification.from_pretrained(
-    model_name_or_path, num_labels=40, ignore_mismatched_sizes=True
+    model_name_or_path, 
+    num_labels=40,
+    ignore_mismatched_sizes=True,
+    problem_type="multi_label_classification"
 )
 
 training_args = TrainingArguments(
     output_dir="./training_outputs",
     per_device_train_batch_size=6,
     evaluation_strategy="steps",
-    num_train_epochs=1,
+    num_train_epochs=2,
     fp16=False,
     save_steps=1,
     eval_steps=1,
