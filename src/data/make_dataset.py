@@ -1,10 +1,10 @@
 import csv
 import math
-import os
 from pathlib import Path
 from typing import List
 
 import numpy as np
+import torch
 import torchvision
 from PIL import Image
 from torch.utils.data import DataLoader, Dataset
@@ -17,23 +17,29 @@ MAX_DATASET_LENGTH = 202599
 class CustomImageDataset(Dataset):
     def __init__(self, images: np.ndarray, labels: np.ndarray):
         """Custom dataset that loads images and labels, then returns them on demand into a DataLoader.
-        Outputs a tuple with the format (label, image) in each output.
+        Outputs a dict with ["pixel_values": Tensor, "labels": Tensor] in each output.
 
         :param image_paths: Paths to the images to be loaded (not directories, specific file paths!)
         :param label_rows: Rows from the label.csv file that correspond to the loaded images
         """
-        self.images = images
-        self.labels = labels
+
+        # TODO: remove the hardcoded [:500]
+        self.images = images[:500]
+        self.labels = labels[:500]
         self.transform = transforms.ToTensor()
+        self.processor = ViTImageProcessor().from_pretrained(
+            "google/vit-base-patch16-224"
+        )
 
     def __len__(self):
         return len(self.images)
 
     def __getitem__(self, idx):
-        image = Image.open(self.images[idx])
-        image = self.transform(image)
-        label = self.labels[idx]
-        return (label, image)
+        sample = Image.open(self.images[idx])
+        # image = torch.flatten(self.transform(image))
+        sample = self.processor(sample, return_tensors="pt")
+        sample["labels"] = torch.tensor(self.labels[idx])
+        return sample
 
 
 class CelebADataModule:
@@ -81,7 +87,7 @@ class CelebADataModule:
         self.attributenames = np.loadtxt(
             self.processed_attributes_path, dtype=str, delimiter=","
         )
-        labels = np.genfromtxt(
+        self.labels = np.genfromtxt(
             self.processed_labels_path,
             delimiter=",",
         )
@@ -108,13 +114,13 @@ class CelebADataModule:
 
         # Create datasets based on splits
         self.train_dataset = CustomImageDataset(
-            images[: train_idx[0]], labels[: train_idx[0]]
+            images[: train_idx[0]], self.labels[: train_idx[0]]
         )
         self.val_dataset = CustomImageDataset(
-            images[train_idx[0] : val_idx[0]], labels[train_idx[0] : val_idx[0]]
+            images[train_idx[0] : val_idx[0]], self.labels[train_idx[0] : val_idx[0]]
         )
         self.test_dataset = CustomImageDataset(
-            images[val_idx[0] :], labels[val_idx[0] :]
+            images[val_idx[0] :], self.labels[val_idx[0] :]
         )
 
     def train_dataloader(self):
@@ -164,7 +170,9 @@ class CelebADataModule:
             delimiter=",",
         )
         labels = labels[:, 1:]  # drop image_id column, now shape [202599, 40]
-        np.savetxt(self.processed_labels_path, labels, delimiter=",")
+        # change all the labels with value -1 to 0
+        labels[labels == -1] = 0
+        np.savetxt(self.processed_labels_path, labels, delimiter=",", fmt="%d")
         print(f"Successfully saved labels under {self.processed_labels_path}")
 
         # Process images
@@ -214,7 +222,7 @@ if __name__ == "__main__":
     # Usage: Process Data
     datamodule = CelebADataModule()
     datamodule.process_data(
-        reduced=False
+        reduced=True
     )  # Change reduced=True to process only 5k images
 
     # Usage: Load Data & Get Dataloaders
