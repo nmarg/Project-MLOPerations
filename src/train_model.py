@@ -1,3 +1,5 @@
+import os
+
 import evaluate
 import numpy as np
 import torch
@@ -56,9 +58,8 @@ def train():
         preds = p.predictions
         preds[preds > 0] = 1
         preds[preds <= 0] = 0
-        preds = preds.flatten().astype(np.int32).tolist()
-        refs = p.label_ids.flatten().astype(np.int32).tolist()
-
+        preds = preds.flatten()
+        refs = p.label_ids.flatten()
         acc = metric.compute(predictions=preds, references=refs)
         return acc
 
@@ -68,7 +69,10 @@ def train():
 
     # create the model for fine-tuning
     model = ViTForImageClassification.from_pretrained(
-        model_name_or_path, num_labels=40, ignore_mismatched_sizes=True, problem_type="multi_label_classification"
+        model_name_or_path,
+        num_labels=40,
+        ignore_mismatched_sizes=True,
+        problem_type="multi_label_classification",
     )
 
     # define the training arguments
@@ -76,12 +80,11 @@ def train():
         output_dir="./training_outputs",
         per_device_train_batch_size=6,
         evaluation_strategy="steps",
-        num_train_epochs=2,
-        fp16=False,
+        num_train_epochs=1,
         save_steps=1,
         eval_steps=1,
         logging_steps=1,
-        learning_rate=0.01,
+        learning_rate=0.001,
         save_total_limit=2,
         remove_unused_columns=False,
         push_to_hub=False,
@@ -102,10 +105,25 @@ def train():
 
     # train and save the model and metrics
     train_results = trainer.train()
-    trainer.save_model()
+    savedir = find_free_directory(MODEL_OUTPUT_DIR)
+    trainer.save_model(savedir)
+    print(f"Saved model under {savedir}")
     trainer.log_metrics("train", train_results.metrics)
     trainer.save_metrics("train", train_results.metrics)
     trainer.save_state()
+
+
+def find_free_directory(savedir):
+    # Create folder for save directory, incrementing by 1 until new folder found
+    index = 0
+    while 1:
+        dir = os.path.join(savedir, f"model{index}")
+        if os.path.exists(dir):
+            index += 1
+            continue
+        else:
+            os.makedirs(dir)
+            return dir
 
 
 if __name__ == "__main__":
