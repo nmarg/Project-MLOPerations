@@ -37,6 +37,9 @@ jobs:
         cd data
         unzip testing.zip
         cd .. 
-    - name: Test with pytest
-      run: |
-        pytest -v
+    - name: Test with pytest and generate Report
+      run: coverage run -m pytest tests/
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v2
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
