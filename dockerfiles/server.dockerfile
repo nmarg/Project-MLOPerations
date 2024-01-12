@@ -9,7 +9,7 @@ COPY requirements.txt requirements.txt
 COPY requirements_dev.txt requirements_dev.txt
 COPY pyproject.toml pyproject.toml
 COPY src/ src/
-COPY data/processed data/processed
+COPY data/testing data/testing
 COPY models/model0 models/model0
 
 WORKDIR /
