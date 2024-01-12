@@ -7,6 +7,7 @@ from transformers import Trainer, TrainingArguments, ViTForImageClassification, 
 
 from data.make_dataset import CelebADataModule
 import hydra
+from sklearn.metrics import f1_score
 
 
 _SRC_ROOT = os.path.dirname(__file__)
@@ -57,16 +58,32 @@ def train(cfg):
     metric = evaluate.load("accuracy", average=cfg.metric)
 
     def compute_metrics(p):
+        # """
+        # Function used internally by tranformers.Trainer
+        # """
+        # preds = p.predictions
+        # preds[preds > 0] = 1
+        # preds[preds <= 0] = 0
+        # preds = preds.flatten()
+        # refs = p.label_ids.flatten()
+        # acc = metric.compute(predictions=preds, references=refs)
+        # return acc
         """
-        Function used internally by tranformers.Trainer
+        Function used internally by transformers.Trainer
         """
+        # Extract the predictions and true labels
         preds = p.predictions
-        preds[preds > 0] = 1
-        preds[preds <= 0] = 0
-        preds = preds.flatten()
-        refs = p.label_ids.flatten()
-        acc = metric.compute(predictions=preds, references=refs)
-        return acc
+        label_ids = p.label_ids
+
+        # Apply a threshold to turn probabilities into binary predictions
+        threshold = 0.5
+        preds = (preds > threshold).astype(int)
+        print(preds)
+
+        # Compute the F1 score
+        f1 = f1_score(label_ids, preds, average="weighted")
+
+        return {"f1": f1}
 
     # load the pretrained model
     model_name_or_path = cfg.pretrained_model_path
