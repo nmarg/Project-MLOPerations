@@ -13,4 +13,4 @@ mkdocs-material <= 9.4.6
 mkdocstrings <= 0.23.0
 mkdocstrings[python]>=0.18
 
-# also need: tensorboardX, transformers[torch], scikit-learn
+# also need: tensorboardX, transformers[torch], scikit-learn, uvicorn[standard], fastapi, python-multipart

@@ -36,11 +36,11 @@ def predict(model: torch.nn.Module, image: BatchFeature, attribute_names: List[s
 
 
 if __name__ == "__main__":
+    model_path = "models/model0"
     att_names = load_attribute_names()
-    model = ViTForImageClassification.from_pretrained("models")
+    model = ViTForImageClassification.from_pretrained(model_path)
     model.eval()
-    processor = ViTImageProcessor.from_pretrained("models")
-    image = transform_image("data/processed/images/image_0.jpg", processor)
-    print(type(image))
+    processor = ViTImageProcessor.from_pretrained(model_path)
+    image = transform_image("data/processed/images/image_20.jpg", processor)
     atts = predict(model, image, att_names)
-    print(len(atts))
+    print(atts)
