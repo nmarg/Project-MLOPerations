@@ -32,7 +32,10 @@ jobs:
       env:
         GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
     - name: Unzip data
-      run: unzip data/processed.zip -d data/ 
+      run: |
+        cd data
+        unzip processed.zip
+        cd .. 
     - name: Test with pytest
       run: |
         pytest -v
