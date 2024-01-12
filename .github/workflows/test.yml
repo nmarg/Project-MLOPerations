@@ -38,7 +38,9 @@ jobs:
         unzip testing.zip
         cd .. 
     - name: Test with pytest and generate Report
-      run: coverage run -m pytest tests/
+      run: |
+        coverage run -m pytest tests/
+        coverage xml -o coverage.xml -i
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v2
       env:
