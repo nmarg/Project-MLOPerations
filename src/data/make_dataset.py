@@ -15,17 +15,22 @@ MAX_DATASET_LENGTH = 202599
 
 
 class CustomImageDataset(Dataset):
-    def __init__(self, images: np.ndarray, labels: np.ndarray):
+    def __init__(self, images: np.ndarray, labels: np.ndarray, light_weight=False):
         """Custom dataset that loads images and labels, then returns them on demand into a DataLoader.
         Outputs a dict with ["pixel_values": Tensor, "labels": Tensor] in each output.
 
         :param image_paths: Paths to the images to be loaded (not directories, specific file paths!)
         :param label_rows: Rows from the label.csv file that correspond to the loaded images
+        :param light_weight: use a smaller dataset - used for debugging, defaults to False
         """
 
-        # TODO: remove the hardcoded [:500]
-        self.images = images[:500]
-        self.labels = labels[:500]
+        if light_weight:
+            N = 5
+            self.images = images[:N]
+            self.labels = labels[:N]
+        else:
+            self.images = images
+            self.labels = labels
         self.transform = transforms.ToTensor()
         self.processor = ViTImageProcessor().from_pretrained("google/vit-base-patch16-224")
 
@@ -61,7 +66,7 @@ class CelebADataModule:
 
         self.batch_size = batch_size
 
-    def setup(self, use_portion_of_dataset=1.0, train_val_test_split=[0.6, 0.2, 0.2]):
+    def setup(self, use_portion_of_dataset=1.0, train_val_test_split=[0.6, 0.2, 0.2], light_weight=False):
         """Setup the data module, loading .jpg images from data/processed/ and splitting
         training, testing, and validation data.
 
@@ -73,6 +78,7 @@ class CelebADataModule:
 
         :param use_percent_of_dataset: portion of original dataset to use, defaults to 1.0
         :param train_val_test_split: how to split training, validation
+        :param light_weight: use a smaller dataset - used for debugging, defaults to False
         and test data if use_percent_of_dataset != 1.0, defaults to [0.6, 0.2, 0.2]
         """
         # Load attribute names, labels & image paths
@@ -99,9 +105,11 @@ class CelebADataModule:
         print(f"Splitting train/val/test as: [{train_idx[0]}, {val_idx[0]-train_idx[0]}, {len(images)-val_idx[0]}]")
 
         # Create datasets based on splits
-        self.train_dataset = CustomImageDataset(images[: train_idx[0]], self.labels[: train_idx[0]])
-        self.val_dataset = CustomImageDataset(images[train_idx[0] : val_idx[0]], self.labels[train_idx[0] : val_idx[0]])
-        self.test_dataset = CustomImageDataset(images[val_idx[0] :], self.labels[val_idx[0] :])
+        self.train_dataset = CustomImageDataset(images[: train_idx[0]], self.labels[: train_idx[0]], light_weight)
+        self.val_dataset = CustomImageDataset(
+            images[train_idx[0] : val_idx[0]], self.labels[train_idx[0] : val_idx[0]], light_weight
+        )
+        self.test_dataset = CustomImageDataset(images[val_idx[0] :], self.labels[val_idx[0] :], light_weight)
 
     def train_dataloader(self):
         """Return a train dataloader with the requested split specified in self.setup()

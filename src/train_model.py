@@ -3,12 +3,7 @@ import os
 import evaluate
 import torch
 from datasets import DatasetDict
-from transformers import (
-    Trainer,
-    TrainingArguments,
-    ViTForImageClassification,
-    ViTImageProcessor,
-)
+from transformers import Trainer, TrainingArguments, ViTForImageClassification, ViTImageProcessor, set_seed
 
 from data.make_dataset import CelebADataModule
 import hydra
@@ -23,10 +18,11 @@ def collate_fn(batch):
     The data collator function.
     Used internally by tranformers.Trainer
     """
-    return {
-        "pixel_values": torch.cat([x["pixel_values"] for x in batch], dim=0).float(),
-        "labels": torch.stack([x["labels"] for x in batch]).float(),
+    data = {
+        "pixel_values": torch.cat([x["pixel_values"] for x in batch], dim=0).to(torch.float32),
+        "labels": torch.stack([x["labels"] for x in batch]).to(torch.float32),
     }
+    return data
 
 
 @hydra.main(config_path=os.path.join(_PROJECT_ROOT, "config/model"), config_name="model_config.yaml", version_base=None)
@@ -35,11 +31,15 @@ def train(cfg):
     Train the model on processed data.
     """
 
+    # set seed
+    if cfg.reproducible_experiment:
+        set_seed(cfg.seed)
+
     # initialize the input dataset
     datamodule = CelebADataModule(cfg.batch_size)
 
     # Usage: Load Data & Get Dataloaders
-    datamodule.setup()
+    datamodule.setup(light_weight=cfg.light_weight)
     trainloader = datamodule.train_dataloader()
     valloader = datamodule.val_dataloader()
     testloader = datamodule.test_dataloader()
@@ -75,10 +75,17 @@ def train(cfg):
     # create the model for fine-tuning
     model = ViTForImageClassification.from_pretrained(
         model_name_or_path,
-        num_labels=40,
+        num_labels=cfg.num_labels,
         ignore_mismatched_sizes=True,
         problem_type="multi_label_classification",
     )
+
+    # Manually initialize the classification layer
+    # This step is necessary to get reproducible results
+    if model.classifier.weight.requires_grad:  # Check if it's a newly added layer
+        torch.nn.init.xavier_uniform_(model.classifier.weight)
+        torch.nn.init.zeros_(model.classifier.bias)
+    model.train()
 
     # define the training arguments
     training_args = TrainingArguments(
