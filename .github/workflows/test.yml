@@ -28,13 +28,13 @@ jobs:
     - uses: iterative/setup-dvc@v1
     - name: Get data
       run: |
-        dvc pull
+        dvc pull data/testing.zip.dvc
       env:
         GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
     - name: Unzip data
       run: |
         cd data
-        unzip processed.zip
+        unzip testing.zip
         cd .. 
     - name: Test with pytest
       run: |
