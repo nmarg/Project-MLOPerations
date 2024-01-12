@@ -1,2 +1,8 @@
-pretrained_model_path: google/vit-base-patch16-224
+pretrained_model_path: "google/vit-base-patch16-224"
 num_labels: 40
+batch_size: 64
+metric: "macro"
+output_dir: "./training_outputs"
+epochs: 1
+lr: 0.001
+model_output_dir: "./models"

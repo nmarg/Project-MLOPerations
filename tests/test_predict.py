@@ -14,9 +14,6 @@ def test_load_attribute_names():
         assert att in att_names
 
 
-# TODO use hydra
-
-
 @pytest.mark.parametrize("image", ["image_0.jpg", "image_5.jpg", "image_17.jpg"])
 @pytest.mark.parametrize("model_path", [os.path.join(_PATH_MODEL, "model0")])
 def test_transform_image(image, model_path):

@@ -1,7 +1,6 @@
 import os
 
 import evaluate
-import numpy as np
 import torch
 from datasets import DatasetDict
 from transformers import (
@@ -12,6 +11,11 @@ from transformers import (
 )
 
 from data.make_dataset import CelebADataModule
+import hydra
+
+
+_SRC_ROOT = os.path.dirname(__file__)
+_PROJECT_ROOT = os.path.dirname(_SRC_ROOT)
 
 
 def collate_fn(batch):
@@ -25,13 +29,14 @@ def collate_fn(batch):
     }
 
 
-def train():
+@hydra.main(config_path=os.path.join(_PROJECT_ROOT, "config/model"), config_name="model_config.yaml", version_base=None)
+def train(cfg):
     """
     Train the model on processed data.
     """
 
     # initialize the input dataset
-    datamodule = CelebADataModule()
+    datamodule = CelebADataModule(cfg.batch_size)
 
     # Usage: Load Data & Get Dataloaders
     datamodule.setup()
@@ -48,8 +53,8 @@ def train():
     )
 
     # metric to compute -> accuracy in this case
-    # micro-averaging => the accuracy will be computed globally by counting the total true positives, false negatives, and false positives.
-    metric = evaluate.load("accuracy", average="macro")
+    # macro-averaging => the accuracy will be computed globally by counting the total true positives, false negatives, and false positives.
+    metric = evaluate.load("accuracy", average=cfg.metric)
 
     def compute_metrics(p):
         """
@@ -64,7 +69,7 @@ def train():
         return acc
 
     # load the pretrained model
-    model_name_or_path = "google/vit-base-patch16-224"
+    model_name_or_path = cfg.pretrained_model_path
     processor = ViTImageProcessor.from_pretrained(model_name_or_path)
 
     # create the model for fine-tuning
@@ -77,14 +82,14 @@ def train():
 
     # define the training arguments
     training_args = TrainingArguments(
-        output_dir="./training_outputs",
+        output_dir=cfg.output_dir,
         per_device_train_batch_size=6,
         evaluation_strategy="steps",
-        num_train_epochs=1,
+        num_train_epochs=cfg.epochs,
         save_steps=1,
         eval_steps=1,
         logging_steps=1,
-        learning_rate=0.001,
+        learning_rate=cfg.lr,
         save_total_limit=2,
         remove_unused_columns=False,
         push_to_hub=False,
@@ -105,7 +110,7 @@ def train():
 
     # train and save the model and metrics
     train_results = trainer.train()
-    savedir = find_free_directory(MODEL_OUTPUT_DIR)
+    savedir = find_free_directory(cfg.model_output_dir)
     trainer.save_model(savedir)
     print(f"Saved model under {savedir}")
     trainer.log_metrics("train", train_results.metrics)
