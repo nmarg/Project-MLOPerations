@@ -1,6 +1,7 @@
 docs/site/
 data/processed/
 data/raw/
+data/testing/
 training_outputs/
 
 # test cache
