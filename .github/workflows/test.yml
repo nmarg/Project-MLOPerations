@@ -22,10 +22,14 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install -r requirements_dev.txt
         pip install -e .
+        sudo apt-get install unzip
     - uses: iterative/setup-dvc@v1
     - name: Get data
-      run: dvc pull
+      run: |
+        dvc pull
+        unzip data/processed.zip -d data/processed 
       env:
         GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
     - name: Test with pytest
