@@ -29,9 +29,10 @@ jobs:
     - name: Get data
       run: |
         dvc pull
-        unzip data/processed.zip -d data/processed 
       env:
         GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
+    - name: Unzip data
+      run: unzip data/processed.zip -d data/ 
     - name: Test with pytest
       run: |
         pytest -v
