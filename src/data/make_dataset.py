@@ -173,21 +173,17 @@ class CelebADataModule:
         with open(labelfile, "r") as file:
             csv_reader = csv.reader(file)
             attributenames = next(csv_reader)
-        attributenames = np.asarray(attributenames)[1:]
-        np.savetxt(
-            self.processed_attributes_path, attributenames, delimiter=",", fmt="%s"
-        )
-        print(
-            f"Successfully saved attribute names under {self.processed_attributes_path}"
-        )
-
+        attributenames = np.asarray(attributenames)[3:4]
+        np.savetxt(self.processed_attributes_path, attributenames, delimiter=",", fmt="%s")
+        print(f"Successfully saved attribute names under {self.processed_attributes_path}")
         # read labels from raw data & save as labels.csv
         labels = np.genfromtxt(
             Path.joinpath(self.raw_data_dir, "list_attr_celeba.csv"),
             skip_header=1,
             delimiter=",",
         )
-        labels = labels[:, 1:]  # drop image_id column, now shape [202599, 40]
+        # only use the Attractive attribute
+        labels = labels[:, 3:4]
         # change all the labels with value -1 to 0
         labels[labels == -1] = 0
         np.savetxt(self.processed_labels_path, labels, delimiter=",", fmt="%d")

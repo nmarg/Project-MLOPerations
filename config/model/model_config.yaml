@@ -1,5 +1,5 @@
 pretrained_model_path: "google/vit-base-patch16-224"
-num_labels: 40
+num_labels: 1
 batch_size: 64
 metric: "macro"
 output_dir: "./training_outputs"
