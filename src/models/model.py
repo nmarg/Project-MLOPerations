@@ -1,24 +1,18 @@
 import torch
-
-import hydra
-from transformers import ViTForImageClassification, ViTImageProcessor
+from transformers import ViTForImageClassification
 
 
-class VitTransformer(torch.nn.Module):
-    """A transformer containing a pretrained ViT model"""
-
-    @hydra.main(config_path="config", config_name="default_config.yaml")
-    def __init__(self, config):
-        super().__init__()
-        self.model = ViTForImageClassification.from_pretrained(
-            config.model.pretrained_model_path, num_labels=len(config.model.num_labels)
-        )
-
-
-class VitProcessor:
-    """A processor containing a pretrained ViT model"""
-
-    @hydra.main(config_path="config", config_name="default_config.yaml")
-    def __init__(self, config):
-        super().__init__()
-        self.model = ViTImageProcessor.from_pretrained(config.model.pretrained_model_path)
+def make_model(model_path, num_labels):
+    """
+    Create the model for fine-tunning from a pretrained one
+    """
+    model = ViTForImageClassification.from_pretrained(
+        model_path,
+        num_labels=num_labels,
+        ignore_mismatched_sizes=True,
+    )
+    # this initializes the params in order for the code to be reproducible
+    if model.classifier.weight.requires_grad:
+        torch.nn.init.xavier_uniform_(model.classifier.weight)
+        torch.nn.init.zeros_(model.classifier.bias)
+    return model
