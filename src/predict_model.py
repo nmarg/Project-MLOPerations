@@ -10,7 +10,7 @@ def load_attribute_names() -> List[str]:
     """
     Load the attribute names.
     """
-    attributenames = np.loadtxt("data/processed/attributenames.txt", dtype=str, delimiter=",")
+    attributenames = np.loadtxt("data/testing/attributenames.txt", dtype=str, delimiter=",")
     return attributenames
 
 
@@ -41,6 +41,6 @@ if __name__ == "__main__":
     model = ViTForImageClassification.from_pretrained(model_path)
     model.eval()
     processor = ViTImageProcessor.from_pretrained(model_path)
-    image = transform_image("data/processed/images/image_20.jpg", processor)
+    image = transform_image("data/testing/images/image_20.jpg", processor)
     atts = predict(model, image, att_names)
     print(atts)

@@ -40,6 +40,5 @@ async def server_predict(data: UploadFile = File(...)):
     response = {
         "inference": inference,
         "message": HTTPStatus.OK.phrase,
-        "status-code": HTTPStatus.OK,
     }
     return response
