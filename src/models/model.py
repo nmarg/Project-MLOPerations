@@ -1,26 +1,24 @@
 import torch
 
-class MyNeuralNet(torch.nn.Module):
-    """ Basic neural network class. 
-    
-    Args:
-        in_features: number of input features
-        out_features: number of output features
-    
-    """
-    def __init__(self, in_features: int, out_features: int) -> None:
-        self.l1 = torch.nn.Linear(in_features, 500)
-        self.l2 = torch.nn.Linear(500, out_features)
-        self.r = torch.nn.ReLU()
-    
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Forward pass of the model.
-        
-        Args:
-            x: input tensor expected to be of shape [N,in_features]
+import hydra
+from transformers import ViTForImageClassification, ViTImageProcessor
 
-        Returns:
-            Output tensor with shape [N,out_features]
 
-        """
-        return self.l2(self.r(self.l1(x)))
+class VitTransformer(torch.nn.Module):
+    """A transformer containing a pretrained ViT model"""
+
+    @hydra.main(config_path="config", config_name="default_config.yaml")
+    def __init__(self, config):
+        super().__init__()
+        self.model = ViTForImageClassification.from_pretrained(
+            config.model.pretrained_model_path, num_labels=len(config.model.num_labels)
+        )
+
+
+class VitProcessor:
+    """A processor containing a pretrained ViT model"""
+
+    @hydra.main(config_path="config", config_name="default_config.yaml")
+    def __init__(self, config):
+        super().__init__()
+        self.model = ViTImageProcessor.from_pretrained(config.model.pretrained_model_path)
