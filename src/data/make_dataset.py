@@ -238,7 +238,7 @@ class CelebADataModule:
         return example
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # Usage: Process Data
     datamodule = CelebADataModule()
     # datamodule.process_data(
