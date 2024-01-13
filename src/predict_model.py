@@ -1,7 +1,6 @@
 from PIL import Image
 from transformers import ViTForImageClassification, ViTImageProcessor
 import torch
-from typing import List
 from transformers.image_processing_utils import BatchFeature
 
 
@@ -15,7 +14,7 @@ def transform_image(image_path: str, processor: ViTImageProcessor) -> BatchFeatu
     return image_tensor
 
 
-def predict(model: torch.nn.Module, image: BatchFeature) -> List[str]:
+def predict(model: torch.nn.Module, image: BatchFeature) -> str:
     """
     Predict if the person in the image is attractive
     """

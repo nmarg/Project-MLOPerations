@@ -21,9 +21,9 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install -r requirements_dev.txt
-        pip install -e .
+        --mount=type=cache,target=~/pip/.cache pip install -r requirements.txt
+        --mount=type=cache,target=~/pip/.cache pip install -r requirements_dev.txt
+        --mount=type=cache,target=~/pip/.cache pip install -e .
         sudo apt-get install unzip
     - uses: iterative/setup-dvc@v1
     - name: Get data
@@ -36,7 +36,7 @@ jobs:
       run: |
         cd data
         unzip testing.zip
-        cd .. 
+        cd ..
     - name: Test with pytest and generate Report
       run: |
         coverage run -m pytest tests/
