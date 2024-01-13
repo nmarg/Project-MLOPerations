@@ -59,7 +59,7 @@ class CelebADataModule:
         """
         super().__init__()
         self.raw_data_dir = Path(__file__).resolve().parent.parent.parent / "data/raw/"
-        self.processed_data_dir = Path(__file__).resolve().parent.parent.parent / "data/processed/"
+        self.processed_data_dir = Path(__file__).resolve().parent.parent.parent / "data/testing/"
         self.processed_attributes_path = Path.joinpath(self.processed_data_dir, "attributenames.txt")
         self.processed_labels_path = Path.joinpath(self.processed_data_dir, "labels.csv")
         self.processed_images_path = Path.joinpath(self.processed_data_dir, "images/")

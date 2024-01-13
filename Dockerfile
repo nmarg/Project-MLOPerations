@@ -9,9 +9,10 @@ COPY requirements.txt requirements.txt
 COPY requirements_dev.txt requirements_dev.txt
 COPY pyproject.toml pyproject.toml
 COPY src/ src/
-COPY data/processed/ data/processed/
+COPY data/testing/ data/testing/
 COPY config/ config/
 COPY training_outputs/ training_outputs/
+COPY models/ models/
 
 WORKDIR /
 RUN pip install -r requirements.txt --no-cache-dir
