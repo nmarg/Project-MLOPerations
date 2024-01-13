@@ -26,7 +26,7 @@ jobs:
         pip install -e .
         sudo apt-get install unzip
     - name: Auth gcloud
-    - uses: 'google-github-actions/auth@v2'
+      uses: 'google-github-actions/auth@v2'
         with:
           credentials_json: '${{ secrets.GCLOUD_BUCKET_SERVICE_ACCOUNT_KEY }}'
     - name: 'Set up Cloud SDK'
