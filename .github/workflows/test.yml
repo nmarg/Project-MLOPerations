@@ -26,12 +26,17 @@ jobs:
         pip install -e .
         sudo apt-get install unzip
     - uses: iterative/setup-dvc@v1
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        service_account_key: ${{ secrets.GCLOUD_BUCKET_SERVICE_ACCOUNT_KEY }}
+        project_id: [ ${{ secrets.GCLOUD_PROJECT_ID }} ]
     - name: Get data
       run: |
         dvc pull data/testing.zip.dvc
         dvc pull models.dvc
       env:
-        GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
+    GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_BUCKET_SERVICE_ACCOUNT_KEY }}
     - name: Unzip data
       run: |
         cd data
