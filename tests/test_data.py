@@ -22,9 +22,7 @@ def test_process_data():
     # Usage: Process Data
     datamodule.process_data(reduced=True)  # process 5k images
     images = sorted(glob(f"{_TESTING_IMAGE_FOLDER}/*.jpg"))
-    assert (
-        len(images) >= 5000
-    ), "Images processed incorrectly. Less than 5000 samples in data/processed folder."
+    assert len(images) >= 5000, "Images processed incorrectly. Less than 5000 samples in data/processed folder."
 
 
 def test_attribute_names():
@@ -48,15 +46,9 @@ def test_example_data():
     pixel_vals = example["pixel_values"]
     labels = example["labels"]
 
-    assert isinstance(
-        example, BatchFeature
-    ), "Samples are loaded incorrectly. They should be of type BatchFeature."
-    assert isinstance(
-        pixel_vals, Tensor
-    ), "Samples should contain a tensor in their 'pixel_values' key."
-    assert isinstance(
-        labels, Tensor
-    ), "Samples should contain a tensor in their 'labels' key."
+    assert isinstance(example, BatchFeature), "Samples are loaded incorrectly. They should be of type BatchFeature."
+    assert isinstance(pixel_vals, Tensor), "Samples should contain a tensor in their 'pixel_values' key."
+    assert isinstance(labels, Tensor), "Samples should contain a tensor in their 'labels' key."
 
     size, channels, height, width = pixel_vals.shape
     assert channels == 3, "pixel_values are not storing RGB channels in their axis 1"
@@ -65,28 +57,18 @@ def test_example_data():
 
 def test_custom_image_dataset():
     testimg = sorted(glob(f"{_TESTING_IMAGE_FOLDER}/*.jpg"))[:10]
-    testlab = np.genfromtxt(
-        os.path.join(_DATA_TESTING_ROOT, "labels.csv"), delimiter=","
-    )[:10]
+    testlab = np.genfromtxt(os.path.join(_DATA_TESTING_ROOT, "labels.csv"), delimiter=",")[:10]
     testdataset = CustomImageDataset(testimg, testlab)
 
-    assert (
-        testdataset.__len__() == 10
-    ), "CustomImageDataset is not initializing with the correct size."
+    assert testdataset.__len__() == 10, "CustomImageDataset is not initializing with the correct size."
 
     sample = testdataset.__getitem__(idx=0)
     sample_pixel_vals = sample["pixel_values"]
     sample_labels = sample["labels"]
 
-    assert isinstance(
-        sample, BatchFeature
-    ), "Samples are loaded incorrectly. They should be of type BatchFeature."
-    assert isinstance(
-        sample_pixel_vals, Tensor
-    ), "Samples should contain a tensor in their 'pixel_values' key."
-    assert isinstance(
-        sample_labels, Tensor
-    ), "Samples should contain a tensor in their 'labels' key."
+    assert isinstance(sample, BatchFeature), "Samples are loaded incorrectly. They should be of type BatchFeature."
+    assert isinstance(sample_pixel_vals, Tensor), "Samples should contain a tensor in their 'pixel_values' key."
+    assert isinstance(sample_labels, Tensor), "Samples should contain a tensor in their 'labels' key."
 
     size, channels, height, width = sample_pixel_vals.shape
     assert channels == 3, "pixel_values are not storing RGB channels in their axis 1"
