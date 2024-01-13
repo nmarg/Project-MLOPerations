@@ -11,10 +11,10 @@ COPY pyproject.toml pyproject.toml
 COPY src/ src/
 COPY data/testing/ data/testing/
 COPY config/ config/
-COPY training_outputs/ training_outputs/
 COPY models/ models/
 
 WORKDIR /
+RUN mkdir training_outputs
 RUN pip install -r requirements.txt --no-cache-dir
 RUN pip install -r requirements_dev.txt --no-cache-dir
 RUN pip install . --no-deps --no-cache-dir
