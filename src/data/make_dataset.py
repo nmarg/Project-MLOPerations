@@ -12,6 +12,7 @@ from torchvision import transforms
 from transformers import TensorType, ViTImageProcessor
 
 MAX_DATASET_LENGTH = 202599
+PROCESSED_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data/processed/"
 
 
 class CustomImageDataset(Dataset):
@@ -53,10 +54,7 @@ class CustomImageDataset(Dataset):
 
 
 class CelebADataModule:
-    def __init__(
-        self,
-        batch_size: int = 64,
-    ):
+    def __init__(self, batch_size: int = 64, processed_data_dir=PROCESSED_DATA_DIR):
         """Custom data module class for the CelebA dataset. Used for processing
         & loading of data, train/test splitting and constructing dataloaders.
 
@@ -66,9 +64,7 @@ class CelebADataModule:
         """
         super().__init__()
         self.raw_data_dir = Path(__file__).resolve().parent.parent.parent / "data/raw/"
-        self.processed_data_dir = (
-            Path(__file__).resolve().parent.parent.parent / "data/processed/"
-        )
+        self.processed_data_dir = processed_data_dir
         self.processed_attributes_path = Path.joinpath(
             self.processed_data_dir, "attributenames.txt"
         )
