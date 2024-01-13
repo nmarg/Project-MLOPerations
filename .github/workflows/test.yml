@@ -36,8 +36,6 @@ jobs:
       run: |
         dvc pull data/testing.zip.dvc
         dvc pull models.dvc
-      env:
-        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_BUCKET_SERVICE_ACCOUNT_KEY }}
     - name: Unzip data
       run: |
         cd data
