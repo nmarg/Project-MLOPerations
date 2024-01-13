@@ -11,7 +11,7 @@ from tests import _DATA_TESTING_ROOT
 
 _TESTING_IMAGE_FOLDER = os.path.join(_DATA_TESTING_ROOT, "images")
 datamodule = CelebADataModule(processed_data_dir=_DATA_TESTING_ROOT)
-datamodule.setup(light_weight=True)
+datamodule.setup(light_weight=True, light_weight_amount=5)
 
 
 @pytest.mark.skipif(
@@ -25,14 +25,8 @@ def test_process_data():
     assert len(images) >= 5000, "Images processed incorrectly. Less than 5000 samples in data/processed folder."
 
 
-def test_attribute_names():
-    attrnames = datamodule.attribute_names()
-    assert len(attrnames) == 40, "Attribute names of size less than 40"
-    assert attrnames[0] == "5_o_Clock_Shadow", "Attribute names wrong"
-
-
 def test_dataloaders():
-    # Note: testing with light_weight == True
+    # Note: testing with light_weight == True, light_weight_amount = 5
     valloader = datamodule.val_dataloader()
     testloader = datamodule.test_dataloader()
     trainloader = datamodule.train_dataloader()
