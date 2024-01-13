@@ -7,21 +7,21 @@ from torch import Tensor
 from transformers.image_processing_utils import BatchFeature
 
 from src.data.make_dataset import CelebADataModule, CustomImageDataset
-from tests import _DATA_PROCESSED_ROOT
+from tests import _DATA_TESTING_ROOT
 
-_PROCESSED_IMAGE_FOLDER = os.path.join(_DATA_PROCESSED_ROOT, "images")
+_TESTING_IMAGE_FOLDER = os.path.join(_DATA_TESTING_ROOT, "images")
 datamodule = CelebADataModule()
 datamodule.setup(light_weight=True)
 
 
 @pytest.mark.skipif(
-    len(sorted(glob(f"{_PROCESSED_IMAGE_FOLDER}/*.jpg"))) >= 5000,
+    len(sorted(glob(f"{_TESTING_IMAGE_FOLDER}/*.jpg"))) >= 5000,
     reason="Processed images already exist",
 )
 def test_process_data():
     # Usage: Process Data
     datamodule.process_data(reduced=True)  # process 5k images
-    images = sorted(glob(f"{_PROCESSED_IMAGE_FOLDER}/*.jpg"))
+    images = sorted(glob(f"{_TESTING_IMAGE_FOLDER}/*.jpg"))
     assert (
         len(images) >= 5000
     ), "Images processed incorrectly. Less than 5000 samples in data/processed folder."
@@ -64,9 +64,9 @@ def test_example_data():
 
 
 def test_custom_image_dataset():
-    testimg = sorted(glob(f"{_PROCESSED_IMAGE_FOLDER}/*.jpg"))[:10]
+    testimg = sorted(glob(f"{_TESTING_IMAGE_FOLDER}/*.jpg"))[:10]
     testlab = np.genfromtxt(
-        os.path.join(_DATA_PROCESSED_ROOT, "labels.csv"), delimiter=","
+        os.path.join(_TESTING_IMAGE_FOLDER, "labels.csv"), delimiter=","
     )[:10]
     testdataset = CustomImageDataset(testimg, testlab)
 
