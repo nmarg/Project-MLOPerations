@@ -1,13 +1,13 @@
 import os
 
-import evaluate
 import torch
 from datasets import DatasetDict
-from transformers import Trainer, TrainingArguments, ViTForImageClassification, ViTImageProcessor, set_seed
+from models.model import make_model
+from transformers import Trainer, TrainingArguments, ViTImageProcessor, set_seed
 
 from data.make_dataset import CelebADataModule
 import hydra
-from sklearn.metrics import f1_score
+import evaluate
 
 
 _SRC_ROOT = os.path.dirname(__file__)
@@ -21,7 +21,7 @@ def collate_fn(batch):
     """
     data = {
         "pixel_values": torch.cat([x["pixel_values"] for x in batch], dim=0).to(torch.float32),
-        "labels": torch.stack([x["labels"] for x in batch]).to(torch.float32),
+        "labels": torch.stack([x["labels"] for x in batch]).to(torch.float32).unsqueeze(-1),
     }
     return data
 
@@ -53,55 +53,12 @@ def train(cfg):
         }
     )
 
-    # metric to compute -> accuracy in this case
-    # macro-averaging => the accuracy will be computed globally by counting the total true positives, false negatives, and false positives.
-    metric = evaluate.load("accuracy", average=cfg.metric)
-
-    def compute_metrics(p):
-        # """
-        # Function used internally by tranformers.Trainer
-        # """
-        # preds = p.predictions
-        # preds[preds > 0] = 1
-        # preds[preds <= 0] = 0
-        # preds = preds.flatten()
-        # refs = p.label_ids.flatten()
-        # acc = metric.compute(predictions=preds, references=refs)
-        # return acc
-        """
-        Function used internally by transformers.Trainer
-        """
-        # Extract the predictions and true labels
-        preds = p.predictions
-        label_ids = p.label_ids
-
-        # Apply a threshold to turn probabilities into binary predictions
-        threshold = 0.5
-        preds = (preds > threshold).astype(int)
-        print(preds)
-
-        # Compute the F1 score
-        f1 = f1_score(label_ids, preds, average="weighted")
-
-        return {"f1": f1}
-
     # load the pretrained model
     model_name_or_path = cfg.pretrained_model_path
     processor = ViTImageProcessor.from_pretrained(model_name_or_path)
 
     # create the model for fine-tuning
-    model = ViTForImageClassification.from_pretrained(
-        model_name_or_path,
-        num_labels=cfg.num_labels,
-        ignore_mismatched_sizes=True,
-        problem_type="multi_label_classification",
-    )
-
-    # Manually initialize the classification layer
-    # This step is necessary to get reproducible results
-    if model.classifier.weight.requires_grad:  # Check if it's a newly added layer
-        torch.nn.init.xavier_uniform_(model.classifier.weight)
-        torch.nn.init.zeros_(model.classifier.bias)
+    model = make_model(model_name_or_path, cfg.num_labels)
     model.train()
 
     # define the training arguments
@@ -120,6 +77,16 @@ def train(cfg):
         report_to="tensorboard",
         load_best_model_at_end=True,
     )
+
+    metric = evaluate.load("accuracy")
+
+    def compute_metrics(p):
+        """
+        Used for calculating the accuracy
+        Function used internally by transformers.Trainer
+        """
+        preds = (p.predictions > 0.5).astype(int)
+        return metric.compute(predictions=preds, references=p.label_ids)
 
     # define the trainer
     trainer = Trainer(
@@ -140,6 +107,11 @@ def train(cfg):
     trainer.log_metrics("train", train_results.metrics)
     trainer.save_metrics("train", train_results.metrics)
     trainer.save_state()
+
+    # evaluate
+    metrics = trainer.evaluate(dataset_dict["test"])
+    trainer.log_metrics("test", metrics)
+    trainer.save_metrics("test", metrics)
 
 
 def find_free_directory(savedir):
