@@ -66,7 +66,7 @@ def test_example_data():
 def test_custom_image_dataset():
     testimg = sorted(glob(f"{_TESTING_IMAGE_FOLDER}/*.jpg"))[:10]
     testlab = np.genfromtxt(
-        os.path.join(_TESTING_IMAGE_FOLDER, "labels.csv"), delimiter=","
+        os.path.join(_DATA_TESTING_ROOT, "labels.csv"), delimiter=","
     )[:10]
     testdataset = CustomImageDataset(testimg, testlab)
 
