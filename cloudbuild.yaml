@@ -1,7 +1,7 @@
 steps:
 - name: python
   entrypoint: bash
-  args: ['-c', 'pip install -U dvc dvc[gs]; git init; dvc pull;']
+  args: ['-c', 'pip install -U dvc dvc[gs]; dvc pull; sudo apt-get unzip; cd data/; unzip processed.zip']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/dtumlops-335110/testing', '.']
 - name: 'gcr.io/cloud-builders/docker'
