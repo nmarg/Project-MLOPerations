@@ -1,6 +1,39 @@
 outs:
-- md5: d8158d2928fce6d3d78fbfee39519f23.dir
-  size: 343348149
-  nfiles: 5
-  hash: md5
+- hash: md5
   path: models
+  files:
+  - relpath: .gitkeep
+    md5: d41d8cd98f00b204e9800998ecf8427e
+    size: 0
+    cloud:
+      remote_storage:
+        etag: 08cea1f8b3dcda83031001
+        version_id: '1705161181237454'
+  - relpath: model0/config.json
+    md5: 418bee5c0fc2cee5fe8902c7e5d04550
+    size: 2288
+    cloud:
+      remote_storage:
+        etag: 08ae9480b4dcda83031001
+        version_id: '1705161181366830'
+  - relpath: model0/model.safetensors
+    md5: 545cf10d286517569622d32f746050e4
+    size: 343340872
+    cloud:
+      remote_storage:
+        etag: 08b1c9c280ddda83031001
+        version_id: '1705161341838513'
+  - relpath: model0/preprocessor_config.json
+    md5: e3eb7350ec75675c4dab88522b9e66d8
+    size: 325
+    cloud:
+      remote_storage:
+        etag: 08f3e0f8b3dcda83031001
+        version_id: '1705161181245555'
+  - relpath: model0/training_args.bin
+    md5: 85ea02b4ba6a67a2a32e005bc3d334f5
+    size: 4664
+    cloud:
+      remote_storage:
+        etag: 08c0f0f8b3dcda83031001
+        version_id: '1705161181247552'
