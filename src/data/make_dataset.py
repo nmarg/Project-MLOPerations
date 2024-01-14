@@ -12,7 +12,7 @@ from torchvision import transforms
 from transformers import TensorType, ViTImageProcessor
 
 MAX_DATASET_LENGTH = 202599
-PROCESSED_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data/processed/"
+PROCESSED_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data/training/"
 LIGHT_WEIGHT_AMOUNT = 5
 
 

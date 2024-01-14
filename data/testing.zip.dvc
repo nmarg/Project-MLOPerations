@@ -3,3 +3,7 @@ outs:
   size: 33806111
   hash: md5
   path: testing.zip
+  cloud:
+    remote_storage:
+      etag: 08f7a6eeb3dcda83031001
+      version_id: '1705161181074295'
