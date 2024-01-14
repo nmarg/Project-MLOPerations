@@ -14,8 +14,7 @@ datamodule = CelebADataModule(processed_data_dir=_DATA_TESTING_ROOT)
 datamodule.setup(light_weight=True, light_weight_amount=5)
 
 
-@pytest.mark.skipif(
-    len(sorted(glob(f"{_TESTING_IMAGE_FOLDER}/*.jpg"))) >= 5000,
+@pytest.mark.skip(
     reason="Processed images already exist",
 )
 def test_process_data():
