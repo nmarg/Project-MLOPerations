@@ -1,0 +1,8 @@
+steps:
+- name: python
+  entrypoint: bash
+  args: ['-c', 'pip install -U dvc dvc[gs]; dvc pull; sudo apt-get unzip; cd data/; unzip testing.zip;']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/project-mloperations/trainer', '.']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/project-mloperations/trainer']
