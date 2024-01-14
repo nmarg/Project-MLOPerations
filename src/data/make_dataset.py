@@ -39,9 +39,7 @@ class CustomImageDataset(Dataset):
             self.images = images
             self.labels = labels
         self.transform = transforms.ToTensor()
-        self.processor = ViTImageProcessor().from_pretrained(
-            "google/vit-base-patch16-224"
-        )
+        self.processor = ViTImageProcessor().from_pretrained("google/vit-base-patch16-224")
 
     def __len__(self):
         return len(self.images)
@@ -70,6 +68,7 @@ class CelebADataModule:
         super().__init__()
         self.raw_data_dir = Path(__file__).resolve().parent.parent.parent / "data/raw/"
         self.processed_data_dir = Path(processed_data_dir)
+
         self.processed_labels_path = Path.joinpath(
             self.processed_data_dir, "labels.csv"
         )
@@ -98,6 +97,7 @@ class CelebADataModule:
         and test data if use_percent_of_dataset != 1.0, defaults to [0.6, 0.2, 0.2]
         :param light_weight: use a smaller dataset - used for debugging, defaults to False
         """
+
         # Load labels & image paths
         self.labels = np.genfromtxt(
             self.processed_labels_path,
@@ -116,13 +116,9 @@ class CelebADataModule:
         val_idx = [
             182637
             if use_portion_of_dataset == 1.0 and len(images) == MAX_DATASET_LENGTH
-            else math.floor(
-                available_data * (train_val_test_split[0] + train_val_test_split[1])
-            )
+            else math.floor(available_data * (train_val_test_split[0] + train_val_test_split[1]))
         ]
-        print(
-            f"Splitting train/val/test as: [{train_idx[0]}, {val_idx[0]-train_idx[0]}, {len(images)-val_idx[0]}]"
-        )
+        print(f"Splitting train/val/test as: [{train_idx[0]}, {val_idx[0]-train_idx[0]}, {len(images)-val_idx[0]}]")
 
         # Create datasets based on splits
         self.train_dataset = CustomImageDataset(
@@ -197,9 +193,7 @@ class CelebADataModule:
         print(f"Successfully saved labels under {self.processed_labels_path}")
 
         # Process images
-        raw_images = sorted(
-            Path.joinpath(self.raw_data_dir, "images_celeba").glob("*.jpg")
-        )
+        raw_images = sorted(Path.joinpath(self.raw_data_dir, "images_celeba").glob("*.jpg"))
         if len(raw_images) == 0:
             raise Exception(
                 f"No images detected in directory {Path.joinpath(self.raw_data_dir, 'images_celeba')}. Make sure the raw input images are set in the right place."
@@ -218,9 +212,7 @@ class CelebADataModule:
             if raw_image_id % 1000 == 0:
                 print(f"Processed {raw_image_id} of {all_images} images")
             image = Image.open(raw_image_path)
-            image_tensor = processor.preprocess(
-                image, return_tensors=TensorType.PYTORCH
-            )
+            image_tensor = processor.preprocess(image, return_tensors=TensorType.PYTORCH)
             torchvision.utils.save_image(
                 image_tensor["pixel_values"],
                 Path.joinpath(self.processed_images_path, f"image_{raw_image_id}.jpg"),
