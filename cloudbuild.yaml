@@ -6,14 +6,14 @@ steps:
 
 - id: 'build-trainer-image'
   name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/project-mloperations/test/trainer', '-f', 'dockerfiles/train.dockerfile', '.']
+  args: ['build', '-t', 'gcr.io/project-mloperations/trainer', '-f', 'dockerfiles/train.dockerfile', '.']
 - id: 'push-trainer-image'
   name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/project-mloperations/test/trainer']
+  args: ['push', 'gcr.io/project-mloperations/trainer']
 
 - id: 'build-predict-image'
   name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/project-mloperations/test/predict_server', '-f', 'dockerfiles/server.dockerfile', '.']
+  args: ['build', '-t', 'gcr.io/project-mloperations/predict_server', '-f', 'dockerfiles/server.dockerfile', '.']
 - id: 'push-predict-image'
   name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/project-mloperations/test/predict_server']
+  args: ['push', 'gcr.io/project-mloperations/predict_server']
