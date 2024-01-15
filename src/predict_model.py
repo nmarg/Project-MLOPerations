@@ -1,7 +1,13 @@
+import os
+
+import torch
 from PIL import Image
 from transformers import ViTForImageClassification, ViTImageProcessor
-import torch
 from transformers.image_processing_utils import BatchFeature
+
+MODEL_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)), "models", "model0"
+)
 
 
 def transform_image(image_path: str, processor: ViTImageProcessor) -> BatchFeature:
@@ -26,10 +32,9 @@ def predict(model: torch.nn.Module, image: BatchFeature) -> str:
 
 
 if __name__ == "__main__":
-    model_path = "models/model0"
-    model = ViTForImageClassification.from_pretrained(model_path)
+    model = ViTForImageClassification.from_pretrained(MODEL_PATH)
     model.eval()
-    processor = ViTImageProcessor.from_pretrained(model_path)
+    processor = ViTImageProcessor.from_pretrained(MODEL_PATH)
     image = transform_image("data/testing/images/image_0.jpg", processor)
     atts = predict(model, image)
     print(atts)
