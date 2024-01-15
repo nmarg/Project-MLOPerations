@@ -1,9 +1,11 @@
 steps:
+# Setup Env
 - id: 'setup-environment'
   name: python
   entrypoint: bash
   args: ['-c', 'pip install -U dvc dvc[gs]; dvc pull; sudo apt-get unzip; cd data/; unzip testing.zip; cd ..;']
 
+# Build & Push Trainer
 - id: 'build-trainer-image'
   name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/project-mloperations/trainer', '-f', 'dockerfiles/train.dockerfile', '.']
@@ -11,9 +13,28 @@ steps:
   name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/project-mloperations/trainer']
 
+# Build & Push Predict Server
 - id: 'build-predict-image'
   name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/project-mloperations/predict_server', '-f', 'dockerfiles/server.dockerfile', '.']
 - id: 'push-predict-image'
   name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/project-mloperations/predict_server']
+
+  # Deploy container image to Cloud Run
+- id: 'deploy-to-google-cloud-run'
+  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args:
+  - 'run'
+  - 'deploy'
+  - 'predict-server'
+  - '--image'
+  - 'gcr.io/project-mloperations/predict_server:latest'
+  - '--region'
+  - 'europe-west1'
+  - '--memory'
+  - '2G'
+  - '--allow-unauthenticated'
+  - '--platform'
+  - 'managed'
