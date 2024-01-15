@@ -3,3 +3,7 @@ outs:
   size: 32647803
   hash: md5
   path: training.zip
+  cloud:
+    remote_storage:
+      etag: 08968fc4acbfdf83031001
+      version_id: '1705325179766678'
