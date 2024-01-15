@@ -6,29 +6,37 @@ Noa Margeta 232470 `<br/>`
 Ana Marija Pavičić s232468 `<br/>`
 Filip Penzar s232452 `<br/>`
 
-## Project description
+### Have you ever wondered if machines find you attractive?
+
+We have found ourselves asking the same question and decided to find the answer through this project.
+
+## Project information
 
 This is a group project for the DTU course Machine Learning Operations [DTU:02476](https://skaftenicki.github.io/dtu_mlops/projects/).
 
 ### Goal
 
-Our project revolves around creating and deploying a Machine Learning model for an Image Classification problem.
-The goal for our model is to classify facial features (e.g. beard, glasses etc.) on images of people.
-
-### Framework
-
-We used [PyTorch](https://pytorch.org/) to develop our model. Furthermore, we used the [Transformer framework](https://github.com/huggingface/transformers) - the multimodal framework used in various cutting edge technologies. The Transformer framework performs approximately as well as some state-of-the-art Convolutional Neural Network models (CNNs), but requires much less time and computational resources to train.
+Our goal was to create and deploy a model that can make inference on wheteher a person is attractive or not. The main focus of the project was not the accuracy of the model itself, but the operations part around the ML model necessary to build and deploy it. (So don't take the predictions too seriosly)
 
 ### Data
 
-Our dataset for the model is the Kaggle dataset [CelebFaces Attributes](https://www.kaggle.com/datasets/jessicali9530/celeba-dataset/data). It consists of over 200k images of celebrities with 40 binary attribute annotations.
+We got our data from the Kaggle dataset [CelebFaces Attributes](https://www.kaggle.com/datasets/jessicali9530/celeba-dataset/data). It consists of over 200k images of celebrities with 40 binary attribute annotations, but we only chose to analyze the "Attractive" attribute.
 
 ### Model
 
-The model we chose to fine-tune with our dataset is [Vision Transformer(ViT)](https://huggingface.co/docs/transformers/model_doc/vit), which was pretrained on 14 million images and can classify 1000 different items. We could also have used other ViT-type models, such as [ViTMAE](https://huggingface.co/docs/transformers/model_doc/vit_mae) or [ViTMSN](https://huggingface.co/docs/transformers/model_doc/vit_msn). However, for this project we chose the elementary model.
+We used [PyTorch](https://pytorch.org/) for the development. More precisely, we used the [Transformer framework](https://github.com/huggingface/transformers) from huggingface and decided to fine-tune the [Vision Transformer(ViT)](https://huggingface.co/docs/transformers/model_doc/vit), which was pretrained on 14 million images and can classify 1000 different items.
+
+## Running locally
+
+TODO
+
+## Running in the cloud
+
+TODO
 
 ## Project structure
 
+The project structure was generated using the [cookiecutter data science template](https://github.com/drivendata/cookiecutter-data-science).
 ```
 ├── Makefile             <- Makefile with convenience commands like `make data` or `make train`
 ├── README.md            <- The top-level README for developers using this project.
