@@ -5,9 +5,9 @@ from PIL import Image
 from transformers import ViTForImageClassification, ViTImageProcessor
 from transformers.image_processing_utils import BatchFeature
 
-MODEL_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)), "models", "model0"
-)
+PROJECT_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)))
+MODEL_PATH = os.path.join(PROJECT_DIR, "models", "model0")
+TEST_DATA_PATH = os.path.join(PROJECT_DIR, "data", "testing", "images", "image_0.jpg")
 
 
 def transform_image(image_path: str, processor: ViTImageProcessor) -> BatchFeature:
@@ -35,6 +35,7 @@ if __name__ == "__main__":
     model = ViTForImageClassification.from_pretrained(MODEL_PATH)
     model.eval()
     processor = ViTImageProcessor.from_pretrained(MODEL_PATH)
-    image = transform_image("data/testing/images/image_0.jpg", processor)
-    atts = predict(model, image)
-    print(atts)
+    image = transform_image(TEST_DATA_PATH, processor)
+    result = predict(model, image)
+    print(f"Model Prediction for {TEST_DATA_PATH}:")
+    print(result)

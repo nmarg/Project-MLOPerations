@@ -1,8 +1,17 @@
 steps:
+# Setup Env
 - name: python
   entrypoint: bash
   args: ['-c', 'pip install -U dvc dvc[gs]; dvc pull; sudo apt-get unzip; cd data/; unzip testing.zip;']
+
+# Build Train 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/project-mloperations/trainer', '.']
+  args: ['build', '-t', 'gcr.io/project-mloperations/trainer', 'dockerfiles/train.dockerfile']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/project-mloperations/trainer']
+
+# Build Predict Server
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/project-mloperations/predict_server', 'dockerfiles/server.dockerfile']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/project-mloperations/predict_server']
