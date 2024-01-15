@@ -1,7 +1,5 @@
-import csv
 import math
 from pathlib import Path
-from typing import List
 
 import numpy as np
 import torch
@@ -12,7 +10,10 @@ from torchvision import transforms
 from transformers import TensorType, ViTImageProcessor
 
 MAX_DATASET_LENGTH = 202599
-PROCESSED_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data/training/"
+PROCESSED_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data/processed/"
+TESTING_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data/testing/"
+TRAINING_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data/training/"
+RAW_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data/raw/"
 LIGHT_WEIGHT_AMOUNT = 5
 
 
@@ -33,8 +34,8 @@ class CustomImageDataset(Dataset):
         """
 
         if light_weight:
-            self.images = images[:LIGHT_WEIGHT_AMOUNT]
-            self.labels = labels[:LIGHT_WEIGHT_AMOUNT]
+            self.images = images[:light_weight_amount]
+            self.labels = labels[:light_weight_amount]
         else:
             self.images = images
             self.labels = labels
@@ -56,7 +57,7 @@ class CelebADataModule:
     def __init__(
         self,
         batch_size: int = 64,
-        processed_data_dir=PROCESSED_DATA_DIR,
+        processed_data_dir=TRAINING_DATA_DIR,
     ):
         """Custom data module class for the CelebA dataset. Used for processing
         & loading of data, train/test splitting and constructing dataloaders.
@@ -66,12 +67,10 @@ class CelebADataModule:
         :param batch_size: _description_, defaults to 64
         """
         super().__init__()
-        self.raw_data_dir = Path(__file__).resolve().parent.parent.parent / "data/raw/"
+        self.raw_data_dir = RAW_DATA_DIR
         self.processed_data_dir = Path(processed_data_dir)
 
-        self.processed_labels_path = Path.joinpath(
-            self.processed_data_dir, "labels.csv"
-        )
+        self.processed_labels_path = Path.joinpath(self.processed_data_dir, "labels.csv")
         self.processed_images_path = Path.joinpath(self.processed_data_dir, "images/")
 
         self.batch_size = batch_size
@@ -167,18 +166,6 @@ class CelebADataModule:
 
         :param reduced: Only process a reduced amount (5k samples), defaults to False
         """
-        # # read attribute names & save them
-        # labelfile = Path.joinpath(self.raw_data_dir, "list_attr_celeba.csv")
-        # with open(labelfile, "r") as file:
-        #     csv_reader = csv.reader(file)
-        #     attributenames = next(csv_reader)
-        # attributenames = np.asarray(attributenames)[3:4]
-        # np.savetxt(
-        #     self.processed_attributes_path, attributenames, delimiter=",", fmt="%s"
-        # )
-        # print(
-        #     f"Successfully saved attribute names under {self.processed_attributes_path}"
-        # )
         # read labels from raw data & save as labels.csv
         labels = np.genfromtxt(
             Path.joinpath(self.raw_data_dir, "list_attr_celeba.csv"),
@@ -229,9 +216,7 @@ class CelebADataModule:
 if __name__ == "__main__":  # pragma: no cover
     # Usage: Process Data
     datamodule = CelebADataModule()
-    # datamodule.process_data(
-    #     reduced=True
-    # )  # Change reduced=True to process only 5k images
+    datamodule.process_data(reduced=True)  # Change reduced=True to process only 5k images
 
     # Usage: Load Data & Get Dataloaders
     datamodule.setup()

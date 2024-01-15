@@ -1,0 +1,5 @@
+outs:
+- md5: 926be762eb0d852db34e9a128855853f
+  size: 32647803
+  hash: md5
+  path: training.zip

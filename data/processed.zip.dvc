@@ -1,9 +1,5 @@
 outs:
-- md5: f493b141d3a570511be3395df2f3aeee
-  size: 1303502412
+- md5: 67d7acf0dcdc7e2148cd1b67269040ca
+  size: 1315821939
   hash: md5
   path: processed.zip
-  cloud:
-    remote_storage:
-      etag: 089380e1eeddda83031001
-      version_id: '1705161573023763'
