@@ -57,7 +57,7 @@ class CelebADataModule:
     def __init__(
         self,
         batch_size: int = 64,
-        processed_data_dir=TRAINING_DATA_DIR,
+        processed_data_dir=TESTING_DATA_DIR,
     ):
         """Custom data module class for the CelebA dataset. Used for processing
         & loading of data, train/test splitting and constructing dataloaders.

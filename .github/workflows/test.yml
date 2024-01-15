@@ -64,7 +64,6 @@ jobs:
       run: |
         cd data
         unzip testing.zip
-        unzip training.zip
         cd ..
 
     - name: Test with pytest and generate Report
