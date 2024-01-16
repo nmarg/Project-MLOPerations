@@ -1,5 +1,5 @@
-from src.train_model import train
-from src.models.model import make_model
+from src import train
+from src import make_model
 from omegaconf import OmegaConf
 import transformers
 

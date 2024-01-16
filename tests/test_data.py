@@ -6,7 +6,7 @@ import pytest
 from torch import Tensor
 from transformers.image_processing_utils import BatchFeature
 
-from src.data.make_dataset import CelebADataModule, CustomImageDataset
+from src import CelebADataModule, CustomImageDataset
 from tests import _DATA_TESTING_ROOT
 
 _TESTING_IMAGE_FOLDER = os.path.join(_DATA_TESTING_ROOT, "images")
