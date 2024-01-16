@@ -2,13 +2,12 @@
 layout: default
 nav_exclude: true
 ---
-
 # Exam template for 02476 Machine Learning Operations
 
 This is the report template for the exam. Please only remove the text formatted as with three dashes in front and behind
 like:
 
-```--- question 1 fill here ---```
+``--- question 1 fill here ---``
 
 where you instead should add your answers. Any other changes may have unwanted consequences when your report is auto
 generated in the end of the course. For questions where you are asked to include images, start by adding the image to
@@ -65,9 +64,9 @@ end of the project.
 * [ ] Write one or multiple configurations files for your experiments
 * [X] Used Hydra to load the configurations and manage your hyperparameters
 * [ ] When you have something that works somewhat, remember at some point to to some profiling and see if
-      you can optimize your code
+  you can optimize your code
 * [ ] Use Weights & Biases to log training progress and other important metrics/artifacts in your code. Additionally,
-      consider running a hyperparameter optimization sweep.
+  consider running a hyperparameter optimization sweep.
 * [ ] Use Pytorch-lightning (if applicable) to reduce the amount of boilerplate in your code
 
 ### Week 2
@@ -101,13 +100,15 @@ end of the project.
 ## Group information
 
 ### Question 1
+
 > **Enter the group number you signed up on <learn.inside.dtu.dk>**
 >
-> Answer:
+> Answer: MLOps 77
 
 Group 77
 
 ### Question 2
+
 > **Enter the study number for each member in the group**
 >
 > Example:
@@ -116,9 +117,10 @@ Group 77
 >
 > Answer:
 
-s232470, s232468, s232452, s233423, s237214
+s233423, s237214, 232470, s232468, s232452
 
 ### Question 3
+
 > **What framework did you choose to work with and did it help you complete the project?**
 >
 > Answer length: 100-200 words.
@@ -129,7 +131,7 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 3 fill here ---
+We used the Transformers package from the Huggingface group. To make our model we used ViTForImageClassification functionality from the transformers package. It created the model for fine-tuning from the already pre-trained model. For training, we used the Trainer and TrainingArguments functionality from the same package. As their name suggests the TrainingArguments was used to define training arguments like evaluation steps, number of training epochs, etc. The Trainer was used for training the model. Using this package helped us in getting introduced to them, but also took too much of our time. Having the pre-trained model was useful in not having to make our own, but figuring out how to fine-tune it, was as challenging.
 
 ## Coding environment
 
@@ -148,7 +150,11 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 4 fill here ---
+We used conda and pip to manage our dependencies in our project. Conda was used to create virtual environments with specific Python versions and pip to install packages in that environment. The list of dependencies was auto-generated using pipreqs command. To get a complete copy of our development environment, one would have to run the following commands (having conda and pip already installed on the device):
+conda create –name myenv
+conda activate myenv
+pip install -r requirements.txt
+To make sure that the requirements.txt file was regularly updated, each one of us would run the pipreqs command before pushing the code to github.
 
 ### Question 5
 
@@ -250,7 +256,7 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Example:
 > *We have organized our CI into 3 separate files: one for doing ..., one for running ... testing and one for running*
-> *... . In particular for our ..., we used ... .An example of a triggered workflow can be seen here: <weblink>*
+> *... . In particular for our ..., we used ... .An example of a triggered workflow can be seen here: `<weblink>`*
 >
 > Answer:
 
@@ -316,7 +322,7 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Example:
 > *For our project we developed several images: one for training, inference and deployment. For example to run the*
-> *training docker image: `docker run trainer:latest lr=1e-3 batch_size=64`. Link to docker file: <weblink>*
+> *training docker image: `docker run trainer:latest lr=1e-3 batch_size=64`. Link to docker file: `<weblink>`*
 >
 > Answer:
 
