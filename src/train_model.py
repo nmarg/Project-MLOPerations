@@ -107,7 +107,7 @@ def train(cfg):
 
     # if in the cloud save directly to gcs bucket
     if cfg.cloud:
-        savedir = "/gcs/project-mloperations-data/models/model0"
+        savedir = "gs://project-mloperations-data/models/model0"
     else:
         savedir = find_free_directory(cfg.model_output_dir)
 
