@@ -28,4 +28,4 @@ select = ["I"]
 line-length = 120
 
 [tool.ruff.lint]
-extend-select = ["F401"] # Add 	unused-import rule
+extend-select = ["F401", "W191", "W291", "W292", "W293", "W505", "E101", "E101", "E202", "E273", "E501"] # Add 	unused-import rule
