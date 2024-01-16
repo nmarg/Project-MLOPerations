@@ -2,6 +2,7 @@ docs/site/
 data/processed/
 data/raw/
 data/testing/
+data/training/
 training_outputs/
 
 # test cache

@@ -1,14 +1,13 @@
 import os
 
+import evaluate
+import hydra
 import torch
 from datasets import DatasetDict
-from models.model import make_model
 from transformers import Trainer, TrainingArguments, ViTImageProcessor, set_seed
 
-from data.make_dataset import CelebADataModule
-import hydra
-import evaluate
-
+from src.data.make_dataset import CelebADataModule
+from src.models.model import make_model
 
 _SRC_ROOT = os.path.dirname(__file__)
 _PROJECT_ROOT = os.path.dirname(_SRC_ROOT)
@@ -20,13 +19,21 @@ def collate_fn(batch):
     Used internally by tranformers.Trainer
     """
     data = {
-        "pixel_values": torch.cat([x["pixel_values"] for x in batch], dim=0).to(torch.float32),
-        "labels": torch.stack([x["labels"] for x in batch]).to(torch.float32).unsqueeze(-1),
+        "pixel_values": torch.cat([x["pixel_values"] for x in batch], dim=0).to(
+            torch.float32
+        ),
+        "labels": torch.stack([x["labels"] for x in batch])
+        .to(torch.float32)
+        .unsqueeze(-1),
     }
     return data
 
 
-@hydra.main(config_path=os.path.join(_PROJECT_ROOT, "config/model"), config_name="model_config.yaml", version_base=None)
+@hydra.main(
+    config_path=os.path.join(_PROJECT_ROOT, "config/model"),
+    config_name="model_config.yaml",
+    version_base=None,
+)
 def train(cfg):
     """
     Train the model on processed data.
@@ -99,6 +106,10 @@ def train(cfg):
         tokenizer=processor,
     )
 
+    # if testing, don't save the results
+    if cfg.test:
+        return
+
     # train and save the model and metrics
     train_results = trainer.train()
     savedir = find_free_directory(cfg.model_output_dir)
@@ -127,5 +138,5 @@ def find_free_directory(savedir):
             return dir
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     train()
