@@ -1,6 +1,18 @@
 outs:
-- md5: aa734f98ca278fda427b5e894051ef70.dir
-  size: 280468
-  nfiles: 2
-  hash: md5
+- hash: md5
   path: drifting
+  files:
+  - relpath: current_data.csv
+    md5: e35249988e75ace23aaf119ef86d7bcd
+    size: 41
+    cloud:
+      remote_storage:
+        etag: 08ebddd8ee85e283031001
+        version_id: '1705412828475115'
+  - relpath: reference_data.csv
+    md5: 8314d8dd0a98a98fe88f18df25a8f9c9
+    size: 280427
+    cloud:
+      remote_storage:
+        etag: 08dfc4e3ee85e283031001
+        version_id: '1705412828652127'
