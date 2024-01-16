@@ -31,7 +31,7 @@ def predict(model: torch.nn.Module, image: BatchFeature) -> str:
     return "Attractive" if attractive else "Not attractive"
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     model = ViTForImageClassification.from_pretrained(MODEL_PATH)
     model.eval()
     processor = ViTImageProcessor.from_pretrained(MODEL_PATH)
