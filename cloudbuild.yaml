@@ -14,7 +14,7 @@ steps:
   args: ['push', $_TRAINER_IMAGE]
 
 # Deploy training container image to Cloud run
-- id: 'deploy-to-google-cloud-run'
+- id: 'deploy-trainer-to-vertex-ai'
   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: gcloud
   args:
@@ -34,7 +34,7 @@ steps:
   args: ['push', $_PREDICT_IMAGE]
 
   # Deploy prediction server container image to Cloud Run
-- id: 'deploy-to-google-cloud-run'
+- id: 'deploy-server-to-google-cloud-run'
   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: gcloud
   args:
