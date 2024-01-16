@@ -1,17 +1,13 @@
+import os
+
+import torch
 from PIL import Image
 from transformers import ViTForImageClassification, ViTImageProcessor
-import torch
-import numpy as np
-from typing import List
 from transformers.image_processing_utils import BatchFeature
 
-
-def load_attribute_names() -> List[str]:
-    """
-    Load the attribute names.
-    """
-    attributenames = np.loadtxt("data/testing/attributenames.txt", dtype=str, delimiter=",")
-    return attributenames
+PROJECT_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)))
+MODEL_PATH = os.path.join(PROJECT_DIR, "models", "model0")
+TEST_DATA_PATH = os.path.join(PROJECT_DIR, "data", "testing", "images", "image_0.jpg")
 
 
 def transform_image(image_path: str, processor: ViTImageProcessor) -> BatchFeature:
@@ -24,23 +20,22 @@ def transform_image(image_path: str, processor: ViTImageProcessor) -> BatchFeatu
     return image_tensor
 
 
-def predict(model: torch.nn.Module, image: BatchFeature, attribute_names: List[str]) -> List[str]:
+def predict(model: torch.nn.Module, image: BatchFeature) -> str:
     """
-    Predict the labels in the image
+    Predict if the person in the image is attractive
     """
     with torch.no_grad():
-        outputs = model(**image).logits
-        outputs[outputs > 0] = 1
-        outputs[outputs <= 0] = 0
-    return [attribute_names[i] for i in range(outputs.size(1)) if outputs[0, i] == 1]
+        output = model(**image).logits
+        output = torch.sigmoid(output)
+        attractive = (output > 0.5)[0, 0]
+    return "Attractive" if attractive else "Not attractive"
 
 
-if __name__ == "__main__":
-    model_path = "models/model0"
-    att_names = load_attribute_names()
-    model = ViTForImageClassification.from_pretrained(model_path)
+if __name__ == "__main__":  # pragma: no cover
+    model = ViTForImageClassification.from_pretrained(MODEL_PATH)
     model.eval()
-    processor = ViTImageProcessor.from_pretrained(model_path)
-    image = transform_image("data/testing/images/image_20.jpg", processor)
-    atts = predict(model, image, att_names)
-    print(atts)
+    processor = ViTImageProcessor.from_pretrained(MODEL_PATH)
+    image = transform_image(TEST_DATA_PATH, processor)
+    result = predict(model, image)
+    print(f"Model Prediction for {TEST_DATA_PATH}:")
+    print(result)

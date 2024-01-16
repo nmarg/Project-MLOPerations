@@ -1,7 +1,5 @@
-import csv
 import math
 from pathlib import Path
-from typing import List
 
 import numpy as np
 import torch
@@ -12,10 +10,21 @@ from torchvision import transforms
 from transformers import TensorType, ViTImageProcessor
 
 MAX_DATASET_LENGTH = 202599
+PROCESSED_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data/processed/"
+TESTING_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data/testing/"
+TRAINING_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data/training/"
+RAW_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data/raw/"
+LIGHT_WEIGHT_AMOUNT = 5
 
 
 class CustomImageDataset(Dataset):
-    def __init__(self, images: np.ndarray, labels: np.ndarray, light_weight=False):
+    def __init__(
+        self,
+        images: np.ndarray,
+        labels: np.ndarray,
+        light_weight=False,
+        light_weight_amount=LIGHT_WEIGHT_AMOUNT,
+    ):
         """Custom dataset that loads images and labels, then returns them on demand into a DataLoader.
         Outputs a dict with ["pixel_values": Tensor, "labels": Tensor] in each output.
 
@@ -25,9 +34,8 @@ class CustomImageDataset(Dataset):
         """
 
         if light_weight:
-            N = 5
-            self.images = images[:N]
-            self.labels = labels[:N]
+            self.images = images[:light_weight_amount]
+            self.labels = labels[:light_weight_amount]
         else:
             self.images = images
             self.labels = labels
@@ -49,6 +57,7 @@ class CelebADataModule:
     def __init__(
         self,
         batch_size: int = 64,
+        processed_data_dir=TESTING_DATA_DIR,
     ):
         """Custom data module class for the CelebA dataset. Used for processing
         & loading of data, train/test splitting and constructing dataloaders.
@@ -58,15 +67,21 @@ class CelebADataModule:
         :param batch_size: _description_, defaults to 64
         """
         super().__init__()
-        self.raw_data_dir = Path(__file__).resolve().parent.parent.parent / "data/raw/"
-        self.processed_data_dir = Path(__file__).resolve().parent.parent.parent / "data/processed/"
-        self.processed_attributes_path = Path.joinpath(self.processed_data_dir, "attributenames.txt")
+        self.raw_data_dir = RAW_DATA_DIR
+        self.processed_data_dir = Path(processed_data_dir)
+
         self.processed_labels_path = Path.joinpath(self.processed_data_dir, "labels.csv")
         self.processed_images_path = Path.joinpath(self.processed_data_dir, "images/")
 
         self.batch_size = batch_size
 
-    def setup(self, use_portion_of_dataset=1.0, train_val_test_split=[0.6, 0.2, 0.2], light_weight=False):
+    def setup(
+        self,
+        use_portion_of_dataset=1.0,
+        train_val_test_split=[0.6, 0.2, 0.2],
+        light_weight=False,
+        light_weight_amount=LIGHT_WEIGHT_AMOUNT,
+    ):
         """Setup the data module, loading .jpg images from data/processed/ and splitting
         training, testing, and validation data.
 
@@ -78,11 +93,11 @@ class CelebADataModule:
 
         :param use_percent_of_dataset: portion of original dataset to use, defaults to 1.0
         :param train_val_test_split: how to split training, validation
-        :param light_weight: use a smaller dataset - used for debugging, defaults to False
         and test data if use_percent_of_dataset != 1.0, defaults to [0.6, 0.2, 0.2]
+        :param light_weight: use a smaller dataset - used for debugging, defaults to False
         """
-        # Load attribute names, labels & image paths
-        self.attributenames = np.loadtxt(self.processed_attributes_path, dtype=str, delimiter=",")
+
+        # Load labels & image paths
         self.labels = np.genfromtxt(
             self.processed_labels_path,
             delimiter=",",
@@ -105,11 +120,24 @@ class CelebADataModule:
         print(f"Splitting train/val/test as: [{train_idx[0]}, {val_idx[0]-train_idx[0]}, {len(images)-val_idx[0]}]")
 
         # Create datasets based on splits
-        self.train_dataset = CustomImageDataset(images[: train_idx[0]], self.labels[: train_idx[0]], light_weight)
-        self.val_dataset = CustomImageDataset(
-            images[train_idx[0] : val_idx[0]], self.labels[train_idx[0] : val_idx[0]], light_weight
+        self.train_dataset = CustomImageDataset(
+            images[: train_idx[0]],
+            self.labels[: train_idx[0]],
+            light_weight,
+            light_weight_amount,
         )
-        self.test_dataset = CustomImageDataset(images[val_idx[0] :], self.labels[val_idx[0] :], light_weight)
+        self.val_dataset = CustomImageDataset(
+            images[train_idx[0] : val_idx[0]],
+            self.labels[train_idx[0] : val_idx[0]],
+            light_weight,
+            light_weight_amount,
+        )
+        self.test_dataset = CustomImageDataset(
+            images[val_idx[0] :],
+            self.labels[val_idx[0] :],
+            light_weight,
+            light_weight_amount,
+        )
 
     def train_dataloader(self):
         """Return a train dataloader with the requested split specified in self.setup()
@@ -132,28 +160,20 @@ class CelebADataModule:
         """
         return DataLoader(self.test_dataset, batch_size=self.batch_size)
 
-    def process_data(self, reduced=False):
+    def process_data(self, reduced=False):  # pragma: no cover
         """Process images in the raw_data_dir directory and output them into
         the processed_data_dir directory as .jpg files.
 
         :param reduced: Only process a reduced amount (5k samples), defaults to False
         """
-        # read attribute names & save them
-        labelfile = Path.joinpath(self.raw_data_dir, "list_attr_celeba.csv")
-        with open(labelfile, "r") as file:
-            csv_reader = csv.reader(file)
-            attributenames = next(csv_reader)
-        attributenames = np.asarray(attributenames)[1:]
-        np.savetxt(self.processed_attributes_path, attributenames, delimiter=",", fmt="%s")
-        print(f"Successfully saved attribute names under {self.processed_attributes_path}")
-
         # read labels from raw data & save as labels.csv
         labels = np.genfromtxt(
             Path.joinpath(self.raw_data_dir, "list_attr_celeba.csv"),
             skip_header=1,
             delimiter=",",
         )
-        labels = labels[:, 1:]  # drop image_id column, now shape [202599, 40]
+        # only use the Attractive attribute
+        labels = labels[:, 3:4]
         # change all the labels with value -1 to 0
         labels[labels == -1] = 0
         np.savetxt(self.processed_labels_path, labels, delimiter=",", fmt="%d")
@@ -187,18 +207,13 @@ class CelebADataModule:
 
         print("Successfully processed all images.")
 
-    def attribute_names(self) -> List[str]:
-        """Return the attribute names of the image labels.
-
-        :return: List[str] of attribute names with dimension [40]
-        """
-        return self.attributenames
-
     def show_examples(self):
-        print(self.train_dataset[0])
+        example = self.train_dataset[0]
+        print(example)
+        return example
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # Usage: Process Data
     datamodule = CelebADataModule()
     datamodule.process_data(reduced=True)  # Change reduced=True to process only 5k images
@@ -208,3 +223,4 @@ if __name__ == "__main__":
     trainloader = datamodule.train_dataloader()
     valloader = datamodule.val_dataloader()
     testloader = datamodule.test_dataloader()
+    datamodule.show_examples()
