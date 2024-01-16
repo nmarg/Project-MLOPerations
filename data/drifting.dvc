@@ -1,0 +1,6 @@
+outs:
+- md5: aa734f98ca278fda427b5e894051ef70.dir
+  size: 280468
+  nfiles: 2
+  hash: md5
+  path: drifting
