@@ -343,7 +343,7 @@ While working on our project, we utilized branches and pull requests. The reposi
 >
 > Answer:
 
---- question 16 fill here ---
+The debugging method was dependent on the group member. Some used print statements throughout our code, while others employed the built-in Python debugger. In the event that a team member was unsuccessful in debugging, he/she would reach out to another team member for help. This approach allowed us to solve problems more quickly, practice good teamwork, and gain insight into other people’s tasks. We decided against profiling, as most of the code that could run slowly was taken from the transformers package. This makes our optimization significantly harder and more time-consuming. Furthermore, we believe that the rest of the written code runs well, as we have implemented the code review practice, ensuring that it performs at its fastest potential.
 
 ## Working in the cloud
 
