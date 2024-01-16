@@ -8,7 +8,7 @@ from transformers import Trainer, TrainingArguments, ViTImageProcessor, set_seed
 from data.make_dataset import CelebADataModule
 import hydra
 import evaluate
-
+import wandb
 
 _SRC_ROOT = os.path.dirname(__file__)
 _PROJECT_ROOT = os.path.dirname(_SRC_ROOT)
@@ -24,6 +24,8 @@ def collate_fn(batch):
         "labels": torch.stack([x["labels"] for x in batch]).to(torch.float32).unsqueeze(-1),
     }
     return data
+
+wandb.init(project="image-classification", entity="jan-ljubas")
 
 
 @hydra.main(config_path=os.path.join(_PROJECT_ROOT, "config/model"), config_name="model_config.yaml", version_base=None)
@@ -57,6 +59,9 @@ def train(cfg):
     model_name_or_path = cfg.pretrained_model_path
     processor = ViTImageProcessor.from_pretrained(model_name_or_path)
 
+    # logging gradients with wandb
+    wandb.watch(model, log_freq=100)
+
     # create the model for fine-tuning
     model = make_model(model_name_or_path, cfg.num_labels)
     model.train()
@@ -74,7 +79,7 @@ def train(cfg):
         save_total_limit=2,
         remove_unused_columns=False,
         push_to_hub=False,
-        report_to="tensorboard",
+        report_to="wandb",  # reporting to the wandb account
         load_best_model_at_end=True,
     )
 
