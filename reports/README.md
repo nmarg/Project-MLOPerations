@@ -182,7 +182,7 @@ We added a `config` folder containing configuration files for running our model 
 >
 > Answer:
 
---- question 6 fill here ---
+In this project, we have decided to implement good coding practices using Ruff and by employing pre-commit. The rules we have chosen to implement mostly involve checking for unnecessary whitespaces and tabs. Additionally, we have implemented checks to determine whether the imports are used or not. In large projects, there are many programmers who write code in different styles. With tools like Ruff, we ensure that the code is readable and easy to maintain. Another important benefit is that formatting helps avoid unnecessary merge conflicts.
 
 ## Version control
 
