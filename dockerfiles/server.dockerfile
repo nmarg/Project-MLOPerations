@@ -15,6 +15,7 @@ COPY requirements_dev.txt requirements_dev.txt
 COPY pyproject.toml pyproject.toml
 COPY src/ src/
 COPY data/testing data/testing
+COPY data/drifting data/drifting
 COPY models/model0 models/model0
 
 WORKDIR /

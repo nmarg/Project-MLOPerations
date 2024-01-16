@@ -13,6 +13,18 @@ steps:
   name: 'gcr.io/cloud-builders/docker'
   args: ['push', $_TRAINER_IMAGE]
 
+# Deploy training container image to Cloud run
+- id: 'deploy-to-google-cloud-run'
+  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args:
+  - 'ai'
+  - 'custom-jobs'
+  - 'create'
+  - '--region=europe-west1'
+  - '--display-name=trainer-container'
+  - '--config=gpu_trainer_config.yaml'
+
 # Build & Push Predict Server
 - id: 'build-predict-image'
   name: 'gcr.io/cloud-builders/docker'
@@ -21,7 +33,7 @@ steps:
   name: 'gcr.io/cloud-builders/docker'
   args: ['push', $_PREDICT_IMAGE]
 
-  # Deploy container image to Cloud Run
+  # Deploy prediction server container image to Cloud Run
 - id: 'deploy-to-google-cloud-run'
   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: gcloud
