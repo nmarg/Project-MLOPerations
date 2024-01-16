@@ -19,12 +19,8 @@ def collate_fn(batch):
     Used internally by tranformers.Trainer
     """
     data = {
-        "pixel_values": torch.cat([x["pixel_values"] for x in batch], dim=0).to(
-            torch.float32
-        ),
-        "labels": torch.stack([x["labels"] for x in batch])
-        .to(torch.float32)
-        .unsqueeze(-1),
+        "pixel_values": torch.cat([x["pixel_values"] for x in batch], dim=0).to(torch.float32),
+        "labels": torch.stack([x["labels"] for x in batch]).to(torch.float32).unsqueeze(-1),
     }
     return data
 
