@@ -2,10 +2,10 @@ import os
 
 import torch
 from datasets import DatasetDict
-from models.model import make_model
+from src.models.model import make_model
 from transformers import Trainer, TrainingArguments, ViTImageProcessor, set_seed
 
-from data.make_dataset import CelebADataModule
+from src.data.make_dataset import CelebADataModule
 import hydra
 import evaluate
 
@@ -98,6 +98,10 @@ def train(cfg):
         eval_dataset=dataset_dict["validation"],
         tokenizer=processor,
     )
+
+    # if testing, don't save the results
+    if cfg.test:
+        return
 
     # train and save the model and metrics
     train_results = trainer.train()
