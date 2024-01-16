@@ -1,15 +1,18 @@
-import numpy as np
+import pandas as pd
 
 from http import HTTPStatus
 from io import BytesIO
 from csv import writer
 from fastapi import FastAPI, File, UploadFile, BackgroundTasks
-from PIL import Image, ImageStat
+from fastapi.response import HTMLResponse
+from PIL import Image
 from transformers import ViTForImageClassification, ViTImageProcessor
 from datetime import datetime
 from src.predict_model import predict
 from src.data.make_reference_data import calculate_image_params
 from google.cloud import storage
+from evidently.report import Report
+from evidently.metric_preset import DataDriftPreset, DataQualityPreset
 
 app = FastAPI()
 
@@ -81,3 +84,20 @@ async def server_predict(background_tasks: BackgroundTasks, data: UploadFile = F
 
 
     return response
+
+@app.get("/data-drifting-report", response_class=HTMLResponse)
+def data_drifting_report():
+    reference_data = pd.read_csv('data/drifting/reference_data.csv') # should read from gcp!!!
+    current_data = pd.read_csv('data/drifting/current_data.csv') # should read from gcp!!!
+
+    last_column_name = current_data.columns[-1]
+    current_data = current_data.drop(last_column_name, axis=1)
+
+    report = Report(metrics=[DataDriftPreset(), DataQualityPreset()])
+    report.run(reference_data=reference_data, current_data=current_data)
+    report.save_html('report.html')
+
+    with open("report.html", "r") as file:
+        html_content = file.read()
+
+    return HTMLResponse(content=html_content, status_code=200)
