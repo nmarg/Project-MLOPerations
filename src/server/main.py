@@ -1,11 +1,15 @@
+import numpy as np
+
 from http import HTTPStatus
 from io import BytesIO
-
-from fastapi import FastAPI, File, UploadFile
-from PIL import Image
+from csv import writer
+from fastapi import FastAPI, File, UploadFile, BackgroundTasks
+from PIL import Image, ImageStat
 from transformers import ViTForImageClassification, ViTImageProcessor
-
+from datetime import datetime
 from src.predict_model import predict
+from src.data.make_reference_data import calculate_image_params
+from google.cloud import storage
 
 app = FastAPI()
 
@@ -14,9 +18,41 @@ model = ViTForImageClassification.from_pretrained(model_path)
 model.eval()
 processor = ViTImageProcessor.from_pretrained(model_path)
 
+def upload_to_gcs(bucket_name, source_file_name, destination_blob_name):
+    """Uploads a file to the bucket."""
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(destination_blob_name)
+
+    blob.upload_from_filename(source_file_name)
+
+def save_image_prediction(image, inference):
+    image_params = calculate_image_params(image)
+    csv_row = list(image_params)
+
+    if inference == "Not attractive":
+        inference = 0
+    elif inference == "Attractive":
+        inference = 1
+
+    csv_row.append(inference)
+
+    with open('data/drifting/current_data.csv', 'a') as f_object:
+        now = datetime.now()
+
+        csv_row.append(now.strftime("%m/%d/%Y, %H:%M:%S"))
+
+        writer_object = writer(f_object)
+
+        writer_object.writerow(csv_row)
+    
+        f_object.close()
+    
+    upload_to_gcs('project-mloperations-data', 'data/drifting/current_data.csv', 'data/drifting/current_data.csv')
+
 
 @app.post("/predict/")
-async def server_predict(data: UploadFile = File(...)):
+async def server_predict(background_tasks: BackgroundTasks, data: UploadFile = File(...)):
     """
     USAGE:
         curl -X 'POST' \
@@ -40,4 +76,8 @@ async def server_predict(data: UploadFile = File(...)):
         "inference": inference,
         "message": HTTPStatus.OK.phrase,
     }
+
+    background_tasks.add_task(save_image_prediction, image, inference)
+
+
     return response
