@@ -10,3 +10,4 @@ reproducible_experiment: True
 seed: 15
 light_weight: True
 test: False
+cloud: False

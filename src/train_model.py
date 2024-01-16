@@ -19,12 +19,8 @@ def collate_fn(batch):
     Used internally by tranformers.Trainer
     """
     data = {
-        "pixel_values": torch.cat([x["pixel_values"] for x in batch], dim=0).to(
-            torch.float32
-        ),
-        "labels": torch.stack([x["labels"] for x in batch])
-        .to(torch.float32)
-        .unsqueeze(-1),
+        "pixel_values": torch.cat([x["pixel_values"] for x in batch], dim=0).to(torch.float32),
+        "labels": torch.stack([x["labels"] for x in batch]).to(torch.float32).unsqueeze(-1),
     }
     return data
 
@@ -38,7 +34,6 @@ def train(cfg):
     """
     Train the model on processed data.
     """
-
     # set seed
     if cfg.reproducible_experiment:
         set_seed(cfg.seed)
@@ -110,9 +105,14 @@ def train(cfg):
     if cfg.test:
         return
 
+    # if in the cloud save directly to gcs bucket
+    if cfg.cloud:
+        savedir = "/gcs/project-mloperations-data/models/model0"
+    else:
+        savedir = find_free_directory(cfg.model_output_dir)
+
     # train and save the model and metrics
     train_results = trainer.train()
-    savedir = find_free_directory(cfg.model_output_dir)
     trainer.save_model(savedir)
     print(f"Saved model under {savedir}")
     trainer.log_metrics("train", train_results.metrics)
@@ -139,4 +139,8 @@ def find_free_directory(savedir):
 
 
 if __name__ == "__main__":  # pragma: no cover
+    """
+    To train in the cloud, run like:
+    python train_model.py cloud=True
+    """
     train()
