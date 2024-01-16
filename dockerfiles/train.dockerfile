@@ -19,4 +19,4 @@ RUN pip install -r requirements.txt --no-cache-dir
 RUN pip install -r requirements_dev.txt --no-cache-dir
 RUN pip install . --no-deps --no-cache-dir
 
-ENTRYPOINT ["python", "-u", "src/train_model.py", "cloud=True"]
+# ENTRYPOINT ["python", "-u", "src/train_model.py", "cloud=True"]
