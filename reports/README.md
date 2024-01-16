@@ -158,7 +158,7 @@ To make sure that the requirements.txt file was regularly updated, each one of u
 
 ### Question 5
 
-> **We expect that you initialized your project using the cookiecutter template. Explain the overall structure of your**
+> **We expect that you initialized your project using the 	. Explain the overall structure of your**
 > **code. Did you fill out every folder or only a subset?**
 >
 > Answer length: 100-200 words
@@ -169,7 +169,9 @@ To make sure that the requirements.txt file was regularly updated, each one of u
 > *experiments.*
 > Answer:
 
---- question 5 fill here ---
+We initialized our project using a Cookiecutter template. From the Cookiecutter template, we populated the `src`, `data`, `tests`, `reports`, `dockerfiles`, and `models` folders. We omitted the `notebooks`, `references`, and `docs` folders as we did not utilize any Jupyter notebooks in our project. Additionally, we have no references to other projects nor specific documentation.
+
+We added a `config` folder containing configuration files for running our model and experiments. Within the `src` folder, you will find files dedicated to data processing, model construction, training, and prediction. The `data` folder includes DVC data files. The `reports` folder comprises the report for this course. The `dockerfiles` folder is utilized to store files used for building Docker images. Finally, the `models` folder serves as the repository for our pretrained models.
 
 ### Question 6
 
@@ -199,7 +201,7 @@ To make sure that the requirements.txt file was regularly updated, each one of u
 >
 > Answer:
 
---- question 7 fill here ---
+In total, we have implemented 12 tests. Primarily, we are testing data and the model, as these are the most critical parts of our project. Additionally, we are evaluating the training and predicting functionalities of the model. To be more precise, we have implemented tests for the following files: `model.py`, `train_model.py`, `predict_model.py`, and `make_dataset.py`.
 
 ### Question 8
 
@@ -214,7 +216,7 @@ To make sure that the requirements.txt file was regularly updated, each one of u
 >
 > Answer:
 
---- question 8 fill here ---
+The total code coverage is TODO , which includes all our source code.. We are close to achieving 100% coverage, providing us assurance that if someone were to introduce breaking changes, we have a high chance of detecting them. While having 100% coverage would mean that every line of code is executed at least once during tests, it does not imply that our code is bug-free, as not every scenario has been thoroughly tested. This also doesn't guarantee the coverage of all code paths, edge cases, or potential issues. When writing tests for our project, we should not solely focus on code coverage but also consider the effectiveness of our tests. This involves assessing how well they can detect possible errors.
 
 ### Question 9
 
@@ -229,7 +231,7 @@ To make sure that the requirements.txt file was regularly updated, each one of u
 >
 > Answer:
 
---- question 9 fill here ---
+While working on our project, we utilized branches and pull requests. The repository comprised two main branches: `main` and `develop`. The `main` branch served as the branch for a working product, commonly referred to as production, while the `develop` branch was dedicated to ongoing development. Each group member would create a new branch from `develop` when working on a specific part of the project. After completing the work on the code, the group member would initiate a pull request to merge their changes into the `develop` branch. To ensure the quality of the written code, we implemented checks such as requiring at least one person to review it, and ensuring that the pipeline was successful.
 
 ### Question 10
 
