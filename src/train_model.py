@@ -25,8 +25,6 @@ def collate_fn(batch):
     }
     return data
 
-wandb.init(project="image-classification", entity="jan-ljubas")
-
 
 @hydra.main(config_path=os.path.join(_PROJECT_ROOT, "config/model"), config_name="model_config.yaml", version_base=None)
 def train(cfg):
@@ -37,6 +35,16 @@ def train(cfg):
     # set seed
     if cfg.reproducible_experiment:
         set_seed(cfg.seed)
+
+    # Convert the Hydra config to a dictionary to be compatible with wandb
+    cfg_dict = cfg_dict = {k: v for k, v in cfg.items()}
+
+    wandb.init(
+        project="ViT-image-classification",
+        entity="mlops_team_77",
+        config=cfg_dict
+    )
+
 
     # initialize the input dataset
     datamodule = CelebADataModule(cfg.batch_size)
@@ -59,12 +67,12 @@ def train(cfg):
     model_name_or_path = cfg.pretrained_model_path
     processor = ViTImageProcessor.from_pretrained(model_name_or_path)
 
-    # logging gradients with wandb
-    wandb.watch(model, log_freq=100)
-
     # create the model for fine-tuning
     model = make_model(model_name_or_path, cfg.num_labels)
     model.train()
+
+    # logging gradients with wandb
+    wandb.watch(model, log_freq=100)
 
     # define the training arguments
     training_args = TrainingArguments(
