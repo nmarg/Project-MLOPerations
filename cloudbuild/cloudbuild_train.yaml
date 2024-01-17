@@ -25,6 +25,9 @@ steps:
   - '--display-name=trainer-container'
   - '--config=cloudbuild/gpu_trainer_config.yaml'
 
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 substitutions:
   _TRAINER_IMAGE: gcr.io/project-mloperations/trainer
 
