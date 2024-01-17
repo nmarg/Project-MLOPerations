@@ -3,7 +3,7 @@ steps:
 - id: 'setup-environment'
   name: python
   entrypoint: bash
-  args: ['-c', 'pip install -U dvc dvc[gs]; dvc pull; sudo apt-get unzip; cd data/; unzip testing.zip; cd ..;']
+  args: ['-c', 'export GDRIVE_CREDENTIALS_DATA=$_KEY; pip install -U dvc dvc[gs]; dvc pull; sudo apt-get unzip; cd data/; unzip testing.zip; cd ..;']
 
 # Build & Push Trainer
 - id: 'build-trainer-image'
@@ -24,9 +24,6 @@ steps:
   - '--region=europe-west1'
   - '--display-name=trainer-container'
   - '--config=cloudbuild/gpu_trainer_config.yaml'
-
-options:
-  logging: CLOUD_LOGGING_ONLY
 
 substitutions:
   _TRAINER_IMAGE: gcr.io/project-mloperations/trainer
