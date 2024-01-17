@@ -7,7 +7,7 @@ from datasets import DatasetDict
 from transformers import Trainer, TrainingArguments, ViTImageProcessor, set_seed
 
 import wandb
-from data.make_dataset import CelebADataModule
+from src.data.make_dataset import CelebADataModule
 from src.models.model import make_model
 
 _SRC_ROOT = os.path.dirname(__file__)
