@@ -7,8 +7,8 @@ outs:
     size: 41
     cloud:
       remote_storage:
-        etag: 08ebddd8ee85e283031001
-        version_id: '1705412828475115'
+        etag: 08ec93c9b2bfe583031001
+        version_id: '1705531350862316'
   - relpath: reference_data.csv
     md5: 8314d8dd0a98a98fe88f18df25a8f9c9
     size: 280427
