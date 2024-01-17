@@ -8,7 +8,7 @@ steps:
 # Build & Push Trainer
 - id: 'build-trainer-image'
   name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', $_TRAINER_IMAGE, '-f', 'dockerfiles/test.dockerfile', '.']
+  args: ['build', '-t', $_TRAINER_IMAGE, '-f', 'dockerfiles/train.dockerfile', '.']
 - id: 'push-trainer-image'
   name: 'gcr.io/cloud-builders/docker'
   args: ['push', $_TRAINER_IMAGE]
