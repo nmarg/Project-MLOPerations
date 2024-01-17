@@ -1,4 +1,8 @@
 steps:
+- id: 'list-gcs-contents'
+  name: 'gcr.io/cloud-builders/gsutil'
+  args: ['ls', 'gs://project-mloperations-data/drifting/']
+
 # Setup Env
 - id: 'setup-environment'
   name: python
