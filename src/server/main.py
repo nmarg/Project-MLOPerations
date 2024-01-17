@@ -87,8 +87,8 @@ async def server_predict(background_tasks: BackgroundTasks, data: UploadFile = F
 
 @app.get("/data-drifting-report", response_class=HTMLResponse)
 def data_drifting_report():
-    reference_data = pd.read_csv("gs://project-mloperations-data/drifting/reference_data.csv")
-    current_data = pd.read_csv("gs://project-mloperations-data/drifting/current_data.csv")
+    reference_data = pd.read_csv("gs://project-mloperations-data/data/drifting/reference_data.csv")
+    current_data = pd.read_csv("gs://project-mloperations-data/data/drifting/current_data.csv")
 
     last_column_name = current_data.columns[-1]
     current_data = current_data.drop(last_column_name, axis=1)
