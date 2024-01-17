@@ -1,8 +1,4 @@
 steps:
-- id: 'list-gcs-contents'
-  name: 'gcr.io/cloud-builders/gsutil'
-  args: ['gsutill', 'ls']
-
 # Setup Env
 - id: 'setup-environment'
   name: python
