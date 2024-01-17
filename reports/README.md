@@ -328,7 +328,7 @@ While working on our project, we utilized branches and pull requests. The reposi
 >
 > Answer:
 
-Docker was used to containerize two applications in relation to our model: the [trainer](https://github.com/nmarg/Project-MLOperations/blob/main/dockerfiles/train.dockerfile) and the [predict server](https://github.com/nmarg/Project-MLOperations/blob/main/dockerfiles/server.dockerfile). The trainer image runs model training on data stored in our cloud bucket, while the predict server is built with a model to be deployed. Neither of these images had arguments when running them, as they were built with a config file embedded inside. Even though this could be optimized for configurability, we decided to stay with the config file approach and instead focus on the pipeline around the images. Therefore, to run for example predict server, we'd call: `docker run -p 8080:8080 predict_server:latest`. We had experimented with setting the port with a `$PORT` variable for the server, but found no use for it as we would use a constant port in the cloud anyway.
+Docker was used to containerize two applications in relation to our model: the [trainer](https://github.com/nmarg/Project-MLOperations/blob/main/dockerfiles/train.dockerfile) and the [predict server](https://github.com/nmarg/Project-MLOperations/blob/main/dockerfiles/server.dockerfile). The `trainer` image runs model training on data stored in our cloud bucket, while the `predict server` is built with a model to be deployed. Neither of these images had arguments when running them, as they were built with a config file embedded inside. Even though this could be optimized for configurability, we decided to stay with the config file approach and instead focus on the pipeline around the images. Therefore, to run for example predict server, we'd call: `docker run -p 8080:8080 predict_server:latest`. We had experimented with setting the port with a `$PORT` variable for the server, but found no use for it as we would use a constant port in the cloud anyway.
 
 
 ### Question 16
@@ -363,7 +363,7 @@ The debugging method was dependent on the group member. Some used print statemen
 
 We used the following services in Google Cloud Platform for our project:
  - Cloud Storage: Bucket for training data and saved models
- - Cloud Build: Triggering an automated CI/CD pipeline with Cloud Triggers that sets up an environment, builds our docker images, then deploys the predict server to Cloud Run, all set up in cloudbuild.yaml. 
+ - Cloud Build: Triggering an automated CI/CD pipeline with Cloud Triggers that sets up an environment, builds our docker images, then deploys the predict server to Cloud Run, all set up in cloudbuild.yaml. Images are stored in the Container Registry. 
  - Cloud Run: Serverless deployment of our predict model based on the latest image built by Cloud Build.
  @@@@ NOA ADD MORE ABOUT TRAINING MODELS HERE
 
@@ -398,7 +398,7 @@ We used the following services in Google Cloud Platform for our project:
 >
 > Answer:
 
---- question 20 fill here ---
+![GCP Container Registry](figures/Q20.png)
 
 ### Question 21
 
@@ -407,7 +407,7 @@ We used the following services in Google Cloud Platform for our project:
 >
 > Answer:
 
---- question 21 fill here ---
+![GCP Cloud Build History](figures/Q21.png)
 
 ### Question 22
 
@@ -423,7 +423,7 @@ We used the following services in Google Cloud Platform for our project:
 >
 > Answer:
 
---- question 22 fill here ---
+In addition to creating a local FastAPI server for our model, we managed to create an automated CD pipeline in the cloud, which works in the following way: every time there is a new push (or merge) to our main GitHub branch, a Google Cloud Trigger is invoked, that operates based on the instructions described in `cloudbuild.yaml`. This, in turn, builds the FastAPI server into a Docker Image based on the new push into the codebase, pushes that image to the Google Container Registry, then creates a new deployment using Google Cloud Run based on the latest image. After the pipeline is finished, a prediction for an image saved locally may be requested in a terminal with the command `curl -F "data=@<imagename>.jpg" -POST https://predict-server-axvushlxya-ew.a.run.app/predict/` (this is the actual URL of our deployment).
 
 ### Question 23
 
