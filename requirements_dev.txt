@@ -23,3 +23,4 @@ fastapi == 0.109.0
 python-multipart == 0.0.6
 accelerate == 0.26.1
 httpx == 0.26.0
+google-cloud == 0.34.0
