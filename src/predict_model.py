@@ -23,12 +23,6 @@ wandb.init(
 )
 
 
-# getting the light_weight attribute from model_config.yaml
-CONFIG_PATH = os.path.join(PROJECT_DIR, "config", "model", "model_config.yaml")
-model_config = yaml.safe_load(open(CONFIG_PATH, 'r'))
-light_weight = model_config.get('light_weight', None)
-
-
 def transform_image(image_path: str, processor: ViTImageProcessor) -> BatchFeature:
     """
     Loads the image from given path and transforms it so it fits the model input.
@@ -51,7 +45,7 @@ def predict(model: torch.nn.Module, image: BatchFeature) -> str:
 
 
 
-def load_test_data(test_images_directory, labels_path):
+def load_test_data(test_images_directory, labels_path, light_weight):
     """
     Loads all test images and their labels.
     """
@@ -89,9 +83,15 @@ if __name__ == "__main__":
     model.eval()
     processor = ViTImageProcessor.from_pretrained(MODEL_PATH)
 
+
+    # getting the light_weight attribute from model_config.yaml
+    CONFIG_PATH = os.path.join(PROJECT_DIR, "config", "model", "model_config.yaml")
+    model_config = yaml.safe_load(open(CONFIG_PATH, 'r'))
+    light_weight = model_config.get('light_weight', None)
+
     wandb.watch(model, log='all', log_freq=10)
 
-    test_images_paths, true_labels = load_test_data(TEST_DATA_PATH, LABELS_PATH)
+    test_images_paths, true_labels = load_test_data(TEST_DATA_PATH, LABELS_PATH, light_weight)
 
     predictions = []
 
