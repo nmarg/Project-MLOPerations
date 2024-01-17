@@ -38,6 +38,12 @@ jobs:
         restore-keys: |
           ${{ matrix.os }}-py${{ matrix.python-version }}-pip-
 
+    - name: Logging W&B
+      shell: bash
+      env:
+        WANDB_API: ${{ secrets.WANDB_KEY }}
+      run: wandb login "$WANDB_API"
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
