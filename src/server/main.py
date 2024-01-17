@@ -51,8 +51,6 @@ def save_image_prediction(image, inference):
 
         writer_object.writerow(csv_row)
 
-        f_object.close()
-
     upload_to_gcs("project-mloperations-data", "data/drifting/current_data.csv", "data/drifting/current_data.csv")
 
 

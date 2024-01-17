@@ -6,7 +6,7 @@ output_dir: "./training_outputs"
 epochs: 1
 lr: 0.01
 model_output_dir: "./models"
-reproducible_experiment: True
+reproducible_experiment: False
 seed: 15
 light_weight: True
 test: False
