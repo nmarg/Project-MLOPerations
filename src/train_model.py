@@ -1,14 +1,14 @@
 import os
 
+import evaluate
+import hydra
 import torch
 from datasets import DatasetDict
-from models.model import make_model
 from transformers import Trainer, TrainingArguments, ViTImageProcessor, set_seed
 
-from data.make_dataset import CelebADataModule
-import hydra
-import evaluate
 import wandb
+from data.make_dataset import CelebADataModule
+from src.models.model import make_model
 
 _SRC_ROOT = os.path.dirname(__file__)
 _PROJECT_ROOT = os.path.dirname(_SRC_ROOT)

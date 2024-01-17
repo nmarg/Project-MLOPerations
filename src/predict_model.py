@@ -1,13 +1,14 @@
 import os
+
+import pandas as pd
+import torch
+import yaml
 from PIL import Image
+from sklearn.metrics import precision_score
 from transformers import ViTForImageClassification, ViTImageProcessor
 from transformers.image_processing_utils import BatchFeature
-import torch
-import wandb
-import pandas as pd
-from sklearn.metrics import precision_score
-import yaml
 
+import wandb
 
 PROJECT_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)))
 MODEL_PATH = os.path.join(PROJECT_DIR, "models", "model0")
