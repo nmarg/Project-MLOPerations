@@ -27,8 +27,3 @@ jobs:
       - name: Run pre-commit on all files
         run: |
           pre-commit run
-      - name: Commit and Push Fixes
-        run: |
-          git add .
-          git commit -m "Auto-fix pre-commit issues"
-          git push
