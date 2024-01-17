@@ -3,7 +3,7 @@ steps:
 - id: 'setup-environment'
   name: python
   entrypoint: bash
-  args: ['-c', 'export GDRIVE_CREDENTIALS_DATA=$_KEY; pip install -U dvc dvc[gs]; dvc pull; sudo apt-get unzip; cd data/; unzip testing.zip; cd ..;']
+  args: ['-c', 'pip install -U dvc dvc[gs]; dvc pull; sudo apt-get unzip; cd data/; unzip testing.zip; cd ..;']
 
 # Build & Push Trainer
 - id: 'build-trainer-image'
