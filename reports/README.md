@@ -328,7 +328,8 @@ While working on our project, we utilized branches and pull requests. The reposi
 >
 > Answer:
 
---- question 15 fill here ---
+Docker was used to containerize two applications in relation to our model: the [trainer](https://github.com/nmarg/Project-MLOperations/blob/main/dockerfiles/train.dockerfile) and the [predict server](https://github.com/nmarg/Project-MLOperations/blob/main/dockerfiles/server.dockerfile). The trainer image runs model training on data stored in our cloud bucket, while the predict server is built with a model to be deployed. Neither of these images had arguments when running them, as they were built with a config file embedded inside. Even though this could be optimized for configurability, we decided to stay with the config file approach and instead focus on the pipeline around the images. Therefore, to run for example predict server, we'd call: `docker run -p 8080:8080 predict_server:latest`. We had experimented with setting the port with a `$PORT` variable for the server, but found no use for it as we would use a constant port in the cloud anyway.
+
 
 ### Question 16
 
@@ -360,7 +361,11 @@ The debugging method was dependent on the group member. Some used print statemen
 >
 > Answer:
 
---- question 17 fill here ---
+We used the following services in Google Cloud Platform for our project:
+ - Cloud Storage: Bucket for training data and saved models
+ - Cloud Build: Triggering an automated CI/CD pipeline with Cloud Triggers that sets up an environment, builds our docker images, then deploys the predict server to Cloud Run, all set up in cloudbuild.yaml. 
+ - Cloud Run: Serverless deployment of our predict model based on the latest image built by Cloud Build.
+ @@@@ NOA ADD MORE ABOUT TRAINING MODELS HERE
 
 ### Question 18
 
