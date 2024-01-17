@@ -71,16 +71,16 @@ end of the project.
 
 ### Week 2
 
-* [ ] Write unit tests related to the data part of your code
+* [X] Write unit tests related to the data part of your code
 * [X] Write unit tests related to model construction and or model training
 * [X] Calculate the coverage.
 * [X] Get some continuous integration running on the github repository
 * [X] Create a data storage in GCP Bucket for you data and preferable link this with your data version control setup
-* [ ] Create a trigger workflow for automatically building your docker images
+* [X] Create a trigger workflow for automatically building your docker images
 * [ ] Get your model training in GCP using either the Engine or Vertex AI
 * [X] Create a FastAPI application that can do inference using your model
 * [ ] If applicable, consider deploying the model locally using torchserve
-* [ ] Deploy your model in GCP using either Functions or Run as the backend
+* [X] Deploy your model in GCP using either Functions or Run as the backend
 
 ### Week 3
 
@@ -246,7 +246,7 @@ While working on our project, we utilized branches and pull requests. The reposi
 >
 > Answer:
 
---- question 10 fill here ---
+We used DVC in our project. It started out as a google drive based storage, but later on in the project when introducing GCP we switched to a GCP storage bucket. During the project we had trouble with the size of our dataset (200k images), DVC helped us because we had to change the way the dataset is formatted multiple times, each of these reformations would take some time to run on our PCs so having it be "in the cloud" helped with ease of use. Thankfully we did not need to revert back to "previous" versions of the data, but with a few different versions there was a chance we would have needed this functionality as well. 
 
 ### Question 11
 
@@ -262,7 +262,7 @@ While working on our project, we utilized branches and pull requests. The reposi
 >
 > Answer:
 
---- question 11 fill here ---
+Our CI consists of one workflow file called test.yml. This workflow file, as can be concluded from the name, is used to run tests on opening a PR or pushing to main and develop. It tests only one version of python and one OS, because all the code that is being used is used in containerized environments. We had some trouble with this workflow as our data is saved on DVC in a .zip format (because DVC was too slow with a lot of files). This was handled by installing the "unzip" package in the workflow container, and unziping newly pulled data everytime the workflow is ran. An example of a triggered workflow can be seen here: `<https://github.com/nmarg/Project-MLOperations/actions/runs/7553894489/job/20565629910>`. Adding to this we have also setup codecov, for making sure the test coverage of the project stays as high as possible. 
 
 ## Running code and tracking experiments
 
@@ -389,7 +389,8 @@ We used the following services in Google Cloud Platform for our project:
 >
 > Answer:
 
---- question 19 fill here ---
+![GCP Bucket](figures/Q19_1.png)
+![Data stored inside project-mloperations-data bucket](figures/Q19_2.png)
 
 ### Question 20
 
