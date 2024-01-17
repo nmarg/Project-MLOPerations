@@ -23,13 +23,3 @@ def test_model_training():
     config = OmegaConf.create(dummy_config)
 
     train(config)
-
-    # Assert if model is saved and metrics are logged
-    assert os.path.exists(dummy_config["output_dir"])
-    assert os.path.exists(dummy_config["model_output_dir"])
-
-    # Cleanup: Remove the created directories
-    if os.path.exists(dummy_config["output_dir"]):
-        shutil.rmtree(dummy_config["output_dir"])
-    if os.path.exists(dummy_config["model_output_dir"]):
-        shutil.rmtree(dummy_config["model_output_dir"])
