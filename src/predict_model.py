@@ -1,5 +1,4 @@
 import os
-
 from PIL import Image
 from transformers import ViTForImageClassification, ViTImageProcessor
 from transformers.image_processing_utils import BatchFeature
@@ -33,7 +32,6 @@ def transform_image(image_path: str, processor: ViTImageProcessor) -> BatchFeatu
     """
     Loads the image from given path and transforms it so it fits the model input.
     """
-    # Load the image
     image = Image.open(image_path)
     image_tensor = processor(image, return_tensors="pt")
     return image_tensor
@@ -49,7 +47,8 @@ def predict(model: torch.nn.Module, image: BatchFeature) -> str:
         output = torch.sigmoid(output)
         attractive = (output > 0.5)[0, 0]
     return "Attractive" if attractive else "Not attractive"
-  
+
+
 
 def load_test_data(test_images_directory, labels_path):
     """
@@ -65,6 +64,8 @@ def load_test_data(test_images_directory, labels_path):
         length = len(labels_df)
         labels = labels_df.iloc[:, 0].values.tolist()
 
+
+
     for idx in range(length):
         image_name =  f"image_{idx}.jpg"
         image_path = os.path.join(test_images_directory, image_name)
@@ -74,7 +75,8 @@ def load_test_data(test_images_directory, labels_path):
         except FileNotFoundError:
             print(f"File not found: {image_path}")  # TODO: also set up as an app log (maybe with wandb, maybe not)
             continue
-    
+
+
     for i in range(len(labels)):
         labels[i] = "Attractive" if labels[i] == 1 else "Not attractive"
 
@@ -102,10 +104,6 @@ if __name__ == "__main__":
             "Predicted Label": 0 if result == "Attractive" else 1,
             "Image": wandb.Image(image_path, caption=result)
         })
-
-
-        # print(f"Model Prediction for {image_path}:")
-        # print(result)
 
     precision = precision_score(true_labels, predictions, pos_label = "Attractive")
     wandb.log({'precision': precision})
