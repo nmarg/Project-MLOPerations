@@ -23,7 +23,7 @@ steps:
   - 'create'
   - '--region=europe-west1'
   - '--display-name=trainer-container'
-  - '--config=gpu_trainer_config.yaml'
+  - '--config=cloudbuild/gpu_trainer_config.yaml'
 
 substitutions:
   _TRAINER_IMAGE: gcr.io/project-mloperations/trainer
