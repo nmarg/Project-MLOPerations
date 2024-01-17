@@ -49,4 +49,3 @@ substitutions:
 images:
   - '$_TRAINER_IMAGE'
   - '$_PREDICT_IMAGE'
-
