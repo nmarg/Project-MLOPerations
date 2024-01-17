@@ -1,4 +1,5 @@
 import os
+
 from PIL import Image
 from transformers import ViTForImageClassification, ViTImageProcessor
 from transformers.image_processing_utils import BatchFeature
@@ -27,6 +28,10 @@ CONFIG_PATH = os.path.join(PROJECT_DIR, "config", "model", "model_config.yaml")
 model_config = yaml.safe_load(open(CONFIG_PATH, 'r'))
 light_weight = model_config.get('light_weight', None)
 
+PROJECT_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)))
+MODEL_PATH = os.path.join(PROJECT_DIR, "models", "model0")
+TEST_DATA_PATH = os.path.join(PROJECT_DIR, "data", "testing", "images", "image_0.jpg")
+
 
 def transform_image(image_path: str, processor: ViTImageProcessor) -> BatchFeature:
     """
@@ -48,8 +53,7 @@ def predict(model: torch.nn.Module, image: BatchFeature) -> str:
         output = torch.sigmoid(output)
         attractive = (output > 0.5)[0, 0]
     return "Attractive" if attractive else "Not attractive"
-
-
+  
 
 def load_test_data(test_images_directory, labels_path):
     """

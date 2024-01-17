@@ -1,10 +1,11 @@
-from fastapi import FastAPI, UploadFile, File
-from src.predict_model import predict
-from transformers import ViTForImageClassification, ViTImageProcessor
-from io import BytesIO
-from PIL import Image
 from http import HTTPStatus
+from io import BytesIO
 
+from fastapi import FastAPI, File, UploadFile
+from PIL import Image
+from transformers import ViTForImageClassification, ViTImageProcessor
+
+from src.predict_model import predict
 
 app = FastAPI()
 
