@@ -33,15 +33,14 @@ def upload_to_gcs(source_file_name, destination_blob_name):
     blob.upload_from_filename(source_file_name)
 
 
-def download_from_gcs_to_dataframe(source_blob_name):
+def download_from_gcs_to_bytes(source_blob_name):
     """Downloads a blob from the bucket and loads it into a Pandas DataFrame."""
     storage_client = storage.Client()
     bucket = storage_client.bucket(BUCKET_NAME)
     blob = bucket.blob(source_blob_name)
     data = blob.download_as_bytes()
 
-    df = pd.read_csv(BytesIO(data))
-    return df
+    return BytesIO(data)
 
 
 def save_image_prediction(image, inference):
@@ -55,7 +54,13 @@ def save_image_prediction(image, inference):
 
     csv_row.append(inference)
 
-    with open("data/drifting/current_data.csv", "a") as f_object:
+    file_name = "data/drifting/current_data.csv"
+    current_data_str = download_from_gcs_to_bytes(file_name).getvalue().decode("utf-8")
+
+    with open(file_name, "w", encoding="utf-8") as file:
+        file.write(current_data_str)
+
+    with open(file_name, "a") as f_object:
         now = datetime.now()
 
         csv_row.append(now.strftime("%m/%d/%Y, %H:%M:%S"))
@@ -102,8 +107,8 @@ async def server_predict(background_tasks: BackgroundTasks, data: UploadFile = F
 def data_drifting_report():
     reference_data_file_name = "data/drifting/reference_data.csv"
     current_data_file_name = "data/drifting/current_data.csv"
-    reference_data = download_from_gcs_to_dataframe(reference_data_file_name)
-    current_data = download_from_gcs_to_dataframe(current_data_file_name)
+    reference_data = pd.read_csv(download_from_gcs_to_bytes(reference_data_file_name))
+    current_data = pd.read_csv(download_from_gcs_to_bytes(current_data_file_name))
 
     last_column_name = current_data.columns[-1]
     current_data = current_data.drop(last_column_name, axis=1)
