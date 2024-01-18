@@ -1,4 +1,8 @@
+import logging
+import logging.config
 import os
+import sys
+from pathlib import Path
 
 import pandas as pd
 import torch
@@ -23,13 +27,72 @@ wandb.init(
 )
 
 
+LOGS_DIR = Path("logs")     # creates a Path object for the directory named `logs`
+LOGS_DIR.mkdir(parents=True, exist_ok=True) # creates this directory
+
+# setting up the app logging configuration
+logging_config = {  # 4 parts: version, formatters, handlers, root
+
+    "version": 1,
+
+    "formatters": {     # Formatter -> determines how logs should be formatted -> here: 2 types
+        "minimal": {"format": "%(message)s"},
+        "detailed": {
+            "format": "%(levelname)s %(asctime)s [%(name)s:%(filename)s:%(funcName)s:%(lineno)d]\n%(message)s\n"
+        },
+    },
+
+    "handlers": { # Handlers -> in charge of what should happen to different level of logging.
+
+        "console": {
+            "class": "logging.StreamHandler",
+            "stream": sys.stdout,   # sends logs to the .stdout stream
+            "formatter": "minimal", # uses `minimal` format
+            "level": logging.DEBUG, # for level DEBUG and higher (here, all)
+        },
+
+        "info": {
+            "class": "logging.handlers.RotatingFileHandler",    #sends it to files - `rotating` = up to some file size
+            "filename": Path(LOGS_DIR, "info.log"), # sends logs to the info.log file in the LOGS_DIR directory
+            "maxBytes": 10485760,  # 10 MB
+            "backupCount": 10,
+            "formatter": "detailed",                # uses `detailed` format
+            "level": logging.INFO,                  # sends messages of level INFO and higher
+        },
+
+        "error": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": Path(LOGS_DIR, "error.log"),    # sends logs to the error.log file in the LOGS_DIR directory
+            "maxBytes": 10485760,  # 10 MB              # maximum bytes size before rotating
+            "backupCount": 10,                          # number of backup files to keep
+            "formatter": "detailed",                    # uses `detailed` format, too
+            "level": logging.ERROR,                     # only the high-level priority messages
+        },
+    },
+
+    "root": {   # defines the default behaviour of the logging system => applies to all the loggers in the application
+        "handlers": ["console", "info", "error"],
+        "level": logging.DEBUG,  # minumum log level for the root logger
+        "propagate": True,      # should the log be passed to handlers of higher-level priority as well
+    },
+
+}
+
+
+# Apply the logging configuration
+logging.config.dictConfig(logging_config)
+
 def transform_image(image_path: str, processor: ViTImageProcessor) -> BatchFeature:
     """
     Loads the image from given path and transforms it so it fits the model input.
     """
-    image = Image.open(image_path)
-    image_tensor = processor(image, return_tensors="pt")
-    return image_tensor
+    try:
+        image = Image.open(image_path)
+        image_tensor = processor(image, return_tensors="pt")
+        return image_tensor
+    except Exception as e:
+        logging.error(f"An error in transforming the image {image_path}: {e}")
+        raise
 
 
 
@@ -37,15 +100,19 @@ def predict(model: torch.nn.Module, image: BatchFeature) -> str:
     """
     Predict if the person in the image is attractive
     """
-    with torch.no_grad():
-        output = model(**image).logits
-        output = torch.sigmoid(output)
-        attractive = (output > 0.5)[0, 0]
-    return "Attractive" if attractive else "Not attractive"
+    try:
+        with torch.no_grad():
+            output = model(**image).logits
+            output = torch.sigmoid(output)
+            attractive = (output > 0.5)[0, 0]
+        return "Attractive" if attractive else "Not attractive"
+    except Exception as e:
+        logging.error(f"Error in prediction: {e}")
+        raise
 
 
 
-def load_test_data(test_images_directory, labels_path, light_weight):
+def load_test_data(test_images_directory, labels_path, light_weight) -> tuple[list, list]:
     """
     Loads all test images and their labels.
     """
@@ -60,7 +127,6 @@ def load_test_data(test_images_directory, labels_path, light_weight):
         labels = labels_df.iloc[:, 0].values.tolist()
 
 
-
     for idx in range(length):
         image_name =  f"image_{idx}.jpg"
         image_path = os.path.join(test_images_directory, image_name)
@@ -68,7 +134,9 @@ def load_test_data(test_images_directory, labels_path, light_weight):
         try:
             images.append(image_path)
         except FileNotFoundError:
-            print(f"File not found: {image_path}")  # TODO: also set up as an app log (maybe with wandb, maybe not)
+            log_message = f"File not found: {image_path}"
+            print(log_message)  # log as error
+            wandb.log({"error": log_message})   # also to wandb
             continue
 
 
