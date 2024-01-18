@@ -182,8 +182,9 @@ class CelebADataModule:
         # Process images
         raw_images = sorted(Path.joinpath(self.raw_data_dir, "images_celeba").glob("*.jpg"))
         if len(raw_images) == 0:
+            error_text = "Make sure the raw input images are set in the right place."
             raise Exception(
-                f"No images detected in directory {Path.joinpath(self.raw_data_dir, 'images_celeba')}. Make sure the raw input images are set in the right place."
+                f"No images detected in directory {Path.joinpath(self.raw_data_dir, 'images_celeba')}. {error_text}"
             )
         if reduced:  # for debugging, only process 5000 of the available images
             raw_images = raw_images[:5000]

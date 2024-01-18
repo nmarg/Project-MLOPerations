@@ -1,13 +1,11 @@
 name: "Run tests"
 
 on:
-  push:
-    branches: [ master, main, develop ]
   pull_request:
-    branches: [ master, main, develop ]
+    branches: [ main, develop ]
 
 jobs:
-  build:
+  test:
 
     runs-on: ${{ matrix.os }}
     strategy:
@@ -45,6 +43,13 @@ jobs:
         pip install -r requirements_dev.txt
         pip install -e .
         sudo apt-get install unzip
+
+    - name: Logging W&B
+      shell: bash
+      env:
+        WANDB_API: ${{ secrets.WANDB_KEY }}
+      run: wandb login "$WANDB_API"
+
     - name: Auth gcloud
       uses: google-github-actions/auth@v2
       with:

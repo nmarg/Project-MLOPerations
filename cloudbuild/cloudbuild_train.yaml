@@ -1,0 +1,32 @@
+steps:
+# Setup Env
+- id: 'setup-environment'
+  name: python
+  entrypoint: bash
+  args: ['-c', 'pip install -U dvc dvc[gs]; dvc pull; sudo apt-get unzip; cd data/; unzip testing.zip; cd ..;']
+
+# Build & Push Trainer
+- id: 'build-trainer-image'
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', $_TRAINER_IMAGE, '-f', 'dockerfiles/train.dockerfile', '.']
+- id: 'push-trainer-image'
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['push', $_TRAINER_IMAGE]
+
+# Deploy training container image to Cloud run
+- id: 'deploy-trainer-to-vertex-ai'
+  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args:
+  - 'ai'
+  - 'custom-jobs'
+  - 'create'
+  - '--region=europe-west1'
+  - '--display-name=trainer-container'
+  - '--config=cloudbuild/gpu_trainer_config.yaml'
+
+substitutions:
+  _TRAINER_IMAGE: gcr.io/project-mloperations/trainer
+
+images:
+  - '$_TRAINER_IMAGE'
