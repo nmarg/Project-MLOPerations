@@ -498,6 +498,8 @@ For the project only the service account of one member was used. The total cost 
 >
 > Answer:
 
+![Pipeline Overview](figures/Q25.png)
+
 The starting point of the diagram is our local setup, where we integrated Hydra, conda, pip, pre-commit (with ruff) and many more into our code. We added CI that runs tests and pre-commit upon opening a PR to develop or main. If there is a push to main we have CD that automatically builds the docker image for the deployed model server and hosts it on Cloud run. There is also a manual trigger on Cloud build for building the docker image for training a new model and running it in a Vertex AI VM, which can be accessed through the GCP console. Weights&Biases and Hydra are used in the training process. As can be seen from the diagram, an external user can clone our source code and query our deployed model server. Inside the main README of the project there is a guide on how to query the server correctly.
 
 ### Question 26
@@ -518,6 +520,7 @@ The starting point of the diagram is our local setup, where we integrated Hydra,
   Our first plan was to make multilabel inference on 40 attributes, but we ran into a lot of problems with the library. The documentation on the multilabel problems for images was almost non-existant and so we were forced to move to a single label prediction.
 * python imports\
   Python imports turned out to be harder to implement across multiple enviroments than expected. It was difficult to allign the paths for tests, local training and deployment and containerized applications. For the containers a new path (project path) had to be added to the python path ENV in order for the app to work.
+
 ### Question 27
 
 > **State the individual contributions of each team member. This is required information from DTU, because we need to**
