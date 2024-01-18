@@ -1,7 +1,6 @@
-import os
-from src.train_model import train
 from omegaconf import OmegaConf
-import shutil
+
+from src.train_model import train
 
 
 def test_model_training():

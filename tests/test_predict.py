@@ -1,8 +1,10 @@
-import pytest
-from src.predict_model import transform_image, predict
 import os
-from transformers import ViTImageProcessor, ViTForImageClassification
+
+import pytest
+from transformers import ViTForImageClassification, ViTImageProcessor
 from transformers.image_processing_utils import BatchFeature
+
+from src.predict_model import predict, transform_image
 from tests import _PATH_MODEL
 
 
