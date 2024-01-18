@@ -31,7 +31,6 @@ def train(cfg):
     """
     Train the model on processed data.
     """
-
     # set seed
     if cfg.reproducible_experiment:
         set_seed(cfg.seed)
@@ -107,9 +106,18 @@ def train(cfg):
         tokenizer=processor,
     )
 
+    # if testing, don't save the results
+    if cfg.test:
+        return
+
+    # if in the cloud save directly to gcs bucket
+    if cfg.cloud:
+        savedir = "gs://project-mloperations-data/models/model0"
+    else:
+        savedir = find_free_directory(cfg.model_output_dir)
+
     # train and save the model and metrics
     train_results = trainer.train()
-    savedir = find_free_directory(cfg.model_output_dir)
     trainer.save_model(savedir)
     print(f"Saved model under {savedir}")
     trainer.log_metrics("train", train_results.metrics)
@@ -135,5 +143,9 @@ def find_free_directory(savedir):
             return dir
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
+    """
+    To train in the cloud, run like:
+    python train_model.py cloud=True
+    """
     train()
