@@ -1,3 +1,4 @@
+import pytest
 from fastapi.testclient import TestClient
 
 from src.server.main import app
@@ -5,6 +6,7 @@ from src.server.main import app
 client = TestClient(app)
 
 
+@pytest.mark.skip(reason="It would change bucket data")
 def test_predic():
     url = "/predict/"
 

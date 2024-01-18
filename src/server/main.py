@@ -24,13 +24,13 @@ model.eval()
 processor = ViTImageProcessor.from_pretrained(model_path)
 
 
-def upload_to_gcs(source_file_name, destination_blob_name):
+def upload_to_gcs(file_as_string, destination_blob_name):
     """Uploads a file to the bucket."""
     storage_client = storage.Client()
     bucket = storage_client.bucket(BUCKET_NAME)
     blob = bucket.blob(destination_blob_name)
 
-    blob.upload_from_filename(source_file_name)
+    blob.upload_from_string(file_as_string)
 
 
 def download_from_gcs_to_bytes(source_blob_name):
@@ -54,22 +54,16 @@ def save_image_prediction(image, inference):
 
     csv_row.append(inference)
 
-    file_name = "./data/drifting/current_data.csv"
-    current_data_str = download_from_gcs_to_bytes(file_name).getvalue().decode("utf-8")
+    blob_name = "data/drifting/current_data.csv"
+    current_data_str = download_from_gcs_to_bytes(blob_name).getvalue().decode("utf-8")
 
-    with open(file_name, "w", encoding="utf-8") as file:
-        file.write(current_data_str)
+    now = datetime.now()
 
-    with open(file_name, "a") as f_object:
-        now = datetime.now()
+    csv_row.append(now.strftime("%m/%d/%Y, %H:%M:%S") + "\n")
 
-        csv_row.append(now.strftime("%m/%d/%Y, %H:%M:%S"))
+    csv_row_str = ",".join(csv_row)
 
-        writer_object = writer(f_object)
-
-        writer_object.writerow(csv_row)
-
-    upload_to_gcs("data/drifting/current_data.csv", "data/drifting/current_data.csv")
+    upload_to_gcs((current_data_str + csv_row_str), "data/drifting/current_data.csv")
 
 
 @app.post("/predict/")
