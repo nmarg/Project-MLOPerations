@@ -1,0 +1,29 @@
+name: Pre-Commit Workflow
+
+on:
+  push:
+
+jobs:
+  install_and_run_pre_commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11
+
+      - name: Install pre-commit
+        run: |
+          pip install pre-commit
+
+      - name: Install pre-commit hooks
+        run: |
+          pre-commit install
+
+      - name: Run pre-commit on all files
+        run: |
+          pre-commit run --all-files
