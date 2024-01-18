@@ -18,10 +18,9 @@ COPY data/testing data/testing
 COPY models/model0 models/model0
 
 WORKDIR /
-RUN pip install -r requirements.txt --no-cache-dir
-RUN pip install -r requirements_dev.txt --no-cache-dir
+RUN pip install -r requirements.txt
+RUN pip install -r requirements_dev.txt
 RUN pip install . --no-deps --no-cache-dir
+RUN gsutil cp gs://project-mloperations-data/data/drifting/current_data.csv data/drifting/current_data.csv
 
 ENTRYPOINT exec uvicorn src.server.main:app --port 8080 --host 0.0.0.0
-# CMD exec uvicorn src.server.main:app --port $PORT --host 0.0.0.0
-# ["exec", "uvicorn", "src.server.main:app", "--port", $PORT, "--host", "0.0.0.0"]

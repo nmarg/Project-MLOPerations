@@ -23,6 +23,7 @@ def mock_cfg():
             "seed": 15,
             "light_weight": True,
             "test": True,
+            "cloud": False,
         }
     )
 

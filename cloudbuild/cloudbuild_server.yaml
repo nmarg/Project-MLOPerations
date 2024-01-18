@@ -5,14 +5,6 @@ steps:
   entrypoint: bash
   args: ['-c', 'pip install -U dvc dvc[gs]; dvc pull; sudo apt-get unzip; cd data/; unzip testing.zip; cd ..;']
 
-# Build & Push Trainer
-- id: 'build-trainer-image'
-  name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', $_TRAINER_IMAGE, '-f', 'dockerfiles/train.dockerfile', '.']
-- id: 'push-trainer-image'
-  name: 'gcr.io/cloud-builders/docker'
-  args: ['push', $_TRAINER_IMAGE]
-
 # Build & Push Predict Server
 - id: 'build-predict-image'
   name: 'gcr.io/cloud-builders/docker'
@@ -21,8 +13,8 @@ steps:
   name: 'gcr.io/cloud-builders/docker'
   args: ['push', $_PREDICT_IMAGE]
 
-  # Deploy container image to Cloud Run
-- id: 'deploy-to-google-cloud-run'
+  # Deploy prediction server container image to Cloud Run
+- id: 'deploy-server-to-google-cloud-run'
   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: gcloud
   args:
@@ -42,10 +34,8 @@ steps:
   - 'gcb-trigger-id=$_TRIGGER_ID'
 
 substitutions:
-  _TRAINER_IMAGE: gcr.io/project-mloperations/trainer
   _PREDICT_IMAGE: gcr.io/project-mloperations/predict_server
   _TRIGGER_ID: 3fb933a0-e96a-41d0-a739-f0935fe365d6
 
 images:
-  - '$_TRAINER_IMAGE'
   - '$_PREDICT_IMAGE'
