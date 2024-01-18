@@ -27,7 +27,6 @@ def collate_fn(batch):
 
 
 @hydra.main(config_path=os.path.join(_PROJECT_ROOT, "config/model"), config_name="model_config.yaml", version_base=None)
-
 def train(cfg):
     """
     Train the model on processed data.
@@ -40,12 +39,7 @@ def train(cfg):
     # Convert the Hydra config to a dictionary to be compatible with wandb
     cfg_dict = cfg_dict = {k: v for k, v in cfg.items()}
 
-    wandb.init(
-        project="ViT-image-classification",
-        entity="mlops_team_77",
-        config=cfg_dict
-    )
-
+    wandb.init(project="ViT-image-classification", entity="mlops_team_77", config=cfg_dict)
 
     # initialize the input dataset
     datamodule = CelebADataModule(cfg.batch_size)
