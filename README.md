@@ -2,7 +2,7 @@
 
 Alex Belai s233423 `<br/>`
 Jan Ljubas s237214 `<br/>`
-Noa Margeta 232470 `<br/>`
+Noa Margeta s232470 `<br/>`
 Ana Marija Pavičić s232468 `<br/>`
 Filip Penzar s232452 `<br/>`
 
