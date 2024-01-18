@@ -19,10 +19,8 @@ COPY data/drifting data/drifting
 COPY models/model0 models/model0
 
 WORKDIR /
-RUN pip install -r requirements.txt --no-cache-dir
-RUN pip install -r requirements_dev.txt --no-cache-dir
+RUN --mount=type=cache,target=~/pip/.cache pip install -r requirements.txt
+RUN --mount=type=cache,target=~/pip/.cache pip install -r requirements_dev.txt
 RUN pip install . --no-deps --no-cache-dir
 
 ENTRYPOINT exec uvicorn src.server.main:app --port 8080 --host 0.0.0.0
-# CMD exec uvicorn src.server.main:app --port $PORT --host 0.0.0.0
-# ["exec", "uvicorn", "src.server.main:app", "--port", $PORT, "--host", "0.0.0.0"]

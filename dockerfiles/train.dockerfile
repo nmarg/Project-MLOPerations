@@ -1,6 +1,8 @@
 # Base image
 FROM python:3.11-slim
 
+ENV PYTHONPATH="/:${PYTHONPATH}"
+
 RUN apt update && \
     apt install --no-install-recommends -y build-essential gcc && \
     apt clean && rm -rf /var/lib/apt/lists/*
@@ -14,8 +16,8 @@ COPY config/ config/
 
 WORKDIR /
 RUN mkdir training_outputs
-RUN pip install -r requirements.txt --no-cache-dir
-RUN pip install -r requirements_dev.txt --no-cache-dir
+RUN --mount=type=cache,target=~/pip/.cache pip install -r requirements.txt
+RUN --mount=type=cache,target=~/pip/.cache pip install -r requirements_dev.txt
 RUN pip install . --no-deps --no-cache-dir
 
-ENTRYPOINT ["python", "-u", "src/train_model.py", "cloud=True"]
+CMD ["python", "-u", "src/train_model.py", "cloud=True"]
