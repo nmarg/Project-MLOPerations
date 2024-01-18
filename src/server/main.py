@@ -54,7 +54,7 @@ def save_image_prediction(image, inference):
 
     csv_row.append(inference)
 
-    file_name = "data/drifting/current_data.csv"
+    file_name = "./data/drifting/current_data.csv"
     current_data_str = download_from_gcs_to_bytes(file_name).getvalue().decode("utf-8")
 
     with open(file_name, "w", encoding="utf-8") as file:
