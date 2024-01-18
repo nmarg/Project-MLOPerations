@@ -6,6 +6,7 @@ import torch
 from datasets import DatasetDict
 from transformers import Trainer, TrainingArguments, ViTImageProcessor, set_seed
 
+import wandb
 from src.data.make_dataset import CelebADataModule
 from src.models.model import make_model
 
@@ -25,11 +26,7 @@ def collate_fn(batch):
     return data
 
 
-@hydra.main(
-    config_path=os.path.join(_PROJECT_ROOT, "config/model"),
-    config_name="model_config.yaml",
-    version_base=None,
-)
+@hydra.main(config_path=os.path.join(_PROJECT_ROOT, "config/model"), config_name="model_config.yaml", version_base=None)
 def train(cfg):
     """
     Train the model on processed data.
@@ -38,6 +35,11 @@ def train(cfg):
     # set seed
     if cfg.reproducible_experiment:
         set_seed(cfg.seed)
+
+    # Convert the Hydra config to a dictionary to be compatible with wandb
+    cfg_dict = cfg_dict = {k: v for k, v in cfg.items()}
+
+    wandb.init(project="ViT-image-classification", entity="mlops_team_77", config=cfg_dict)
 
     # initialize the input dataset
     datamodule = CelebADataModule(cfg.batch_size)
@@ -64,6 +66,9 @@ def train(cfg):
     model = make_model(model_name_or_path, cfg.num_labels)
     model.train()
 
+    # logging gradients with wandb
+    wandb.watch(model, log_freq=100)
+
     # define the training arguments
     training_args = TrainingArguments(
         output_dir=cfg.output_dir,
@@ -77,7 +82,7 @@ def train(cfg):
         save_total_limit=2,
         remove_unused_columns=False,
         push_to_hub=False,
-        report_to="tensorboard",
+        report_to="wandb",  # reporting to the wandb account
         load_best_model_at_end=True,
     )
 
@@ -101,10 +106,6 @@ def train(cfg):
         eval_dataset=dataset_dict["validation"],
         tokenizer=processor,
     )
-
-    # if testing, don't save the results
-    if cfg.test:
-        return
 
     # train and save the model and metrics
     train_results = trainer.train()
@@ -134,5 +135,5 @@ def find_free_directory(savedir):
             return dir
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     train()
