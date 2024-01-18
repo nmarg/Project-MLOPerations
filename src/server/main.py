@@ -16,20 +16,31 @@ from evidently.metric_preset import DataDriftPreset, DataQualityPreset
 
 app = FastAPI()
 
+BUCKET_NAME = 'project-mloperations-data'
+
 model_path = "models/model0"
 model = ViTForImageClassification.from_pretrained(model_path)
 model.eval()
 processor = ViTImageProcessor.from_pretrained(model_path)
 
 
-def upload_to_gcs(bucket_name, source_file_name, destination_blob_name):
+def upload_to_gcs(source_file_name, destination_blob_name):
     """Uploads a file to the bucket."""
     storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
+    bucket = storage_client.bucket(BUCKET_NAME)
     blob = bucket.blob(destination_blob_name)
 
     blob.upload_from_filename(source_file_name)
 
+def download_from_gcs_to_dataframe(source_blob_name):
+    """Downloads a blob from the bucket and loads it into a Pandas DataFrame."""
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(BUCKET_NAME)
+    blob = bucket.blob(source_blob_name)
+    data = blob.download_as_bytes()
+
+    df = pd.read_csv(BytesIO(data))
+    return df
 
 def save_image_prediction(image, inference):
     image_params = calculate_image_params(image)
@@ -51,7 +62,7 @@ def save_image_prediction(image, inference):
 
         writer_object.writerow(csv_row)
 
-    upload_to_gcs("project-mloperations-data", "data/drifting/current_data.csv", "data/drifting/current_data.csv")
+    upload_to_gcs("data/drifting/current_data.csv", "data/drifting/current_data.csv")
 
 
 @app.post("/predict/")
@@ -87,9 +98,11 @@ async def server_predict(background_tasks: BackgroundTasks, data: UploadFile = F
 
 @app.get("/data-drifting-report", response_class=HTMLResponse)
 def data_drifting_report():
-    reference_data = pd.read_csv("gs://project-mloperations-data/data/drifting/reference_data.csv")
-    current_data = pd.read_csv("gs://project-mloperations-data/data/drifting/current_data.csv")
-
+    reference_data_file_name = 'data/drifting/reference_data.csv'
+    current_data_file_name = 'data/drifting/current_data.csv'
+    reference_data = download_from_gcs_to_dataframe(reference_data_file_name)
+    current_data = download_from_gcs_to_dataframe(current_data_file_name)
+    
     last_column_name = current_data.columns[-1]
     current_data = current_data.drop(last_column_name, axis=1)
 
