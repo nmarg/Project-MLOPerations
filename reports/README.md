@@ -373,7 +373,7 @@ We used the following services in Google Cloud Platform for our project:
  - Cloud Storage: Bucket for training data and saved models
  - Cloud Build: Triggering an automated CI/CD pipeline with Cloud Triggers that sets up an environment, builds our docker images, then deploys the predict server to Cloud Run, all set up in cloudbuild.yaml. Images are stored in the Container Registry.
  - Cloud Run: Serverless deployment of our predict model based on the latest image built by Cloud Build.
- @@@@ NOA ADD MORE ABOUT TRAINING MODELS HERE
+ - Vertex AI: VM for training the model from the image built by Cloud build.
 
 ### Question 18
 
@@ -388,7 +388,7 @@ We used the following services in Google Cloud Platform for our project:
 >
 > Answer:
 
-We used the Cloud build to first build our containers in the cloud and then deploy them. For the server, we used the Compute engine, while for training we used Vertex AI. Compute engine was chosen for hosting our server and our trained model, as it scales automatically and stays deployed. Vertex AI on the other hand, was used as it provided us with a VM that spins up, trains the model, saves it and terminates, not wasting additional resources. Unfortunatelly we didn't get access to additional quotas in time, so we used the n1-standard-8 machine type without GPU acceleration.
+We used the Cloud build to first build our containers in the cloud and then deploy them. For the server, we used the Cloud run, while for training we used Vertex AI. Cloud run was chosen for hosting our server and our trained model, as it scales automatically and stays deployed. Vertex AI on the other hand, was used as it provided us with a VM that spins up, trains the model, saves it and terminates, not wasting additional resources. Unfortunatelly we didn't get access to additional quotas in time, so we used the n1-standard-8 machine type without GPU acceleration.
 
 ### Question 19
 
