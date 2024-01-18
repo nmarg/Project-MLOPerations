@@ -2,13 +2,12 @@
 layout: default
 nav_exclude: true
 ---
-
 # Exam template for 02476 Machine Learning Operations
 
 This is the report template for the exam. Please only remove the text formatted as with three dashes in front and behind
 like:
 
-```--- question 1 fill here ---```
+``--- question 1 fill here ---``
 
 where you instead should add your answers. Any other changes may have unwanted consequences when your report is auto
 generated in the end of the course. For questions where you are asked to include images, start by adding the image to
@@ -57,35 +56,35 @@ end of the project.
 * [X] Fill out the `make_dataset.py` file such that it downloads whatever data you need and
 * [X] Add a model file and a training script and get that running
 * [X] Remember to fill out the `requirements.txt` file with whatever dependencies that you are using
-* [ ] Remember to comply with good coding practices (`pep8`) while doing the project
+* [X] Remember to comply with good coding practices (`pep8`) while doing the project
 * [X] Do a bit of code typing and remember to document essential parts of your code
 * [X] Setup version control for your data or part of your data
 * [X] Construct one or multiple docker files for your code
 * [X] Build the docker files locally and make sure they work as intended
-* [ ] Write one or multiple configurations files for your experiments
+* [X] Write one or multiple configurations files for your experiments
 * [X] Used Hydra to load the configurations and manage your hyperparameters
 * [ ] When you have something that works somewhat, remember at some point to to some profiling and see if
-      you can optimize your code
-* [ ] Use Weights & Biases to log training progress and other important metrics/artifacts in your code. Additionally,
-      consider running a hyperparameter optimization sweep.
+  you can optimize your code
+* [X] Use Weights & Biases to log training progress and other important metrics/artifacts in your code. Additionally,
+  consider running a hyperparameter optimization sweep.
 * [ ] Use Pytorch-lightning (if applicable) to reduce the amount of boilerplate in your code
 
 ### Week 2
 
-* [ ] Write unit tests related to the data part of your code
+* [X] Write unit tests related to the data part of your code
 * [X] Write unit tests related to model construction and or model training
 * [X] Calculate the coverage.
 * [X] Get some continuous integration running on the github repository
 * [X] Create a data storage in GCP Bucket for you data and preferable link this with your data version control setup
-* [ ] Create a trigger workflow for automatically building your docker images
-* [ ] Get your model training in GCP using either the Engine or Vertex AI
+* [X] Create a trigger workflow for automatically building your docker images
+* [X] Get your model training in GCP using either the Engine or Vertex AI
 * [X] Create a FastAPI application that can do inference using your model
 * [ ] If applicable, consider deploying the model locally using torchserve
-* [ ] Deploy your model in GCP using either Functions or Run as the backend
+* [X] Deploy your model in GCP using either Functions or Run as the backend
 
 ### Week 3
 
-* [ ] Check how robust your model is towards data drifting
+* [X] Check how robust your model is towards data drifting
 * [ ] Setup monitoring for the system telemetry of your deployed model
 * [ ] Setup monitoring for the performance of your deployed model
 * [ ] If applicable, play around with distributed data loading
@@ -94,20 +93,22 @@ end of the project.
 
 ### Additional
 
-* [ ] Revisit your initial project description. Did the project turn out as you wanted?
-* [ ] Make sure all group members have a understanding about all parts of the project
-* [ ] Uploaded all your code to github
+* [X] Revisit your initial project description. Did the project turn out as you wanted?
+* [X] Make sure all group members have a understanding about all parts of the project
+* [X] Uploaded all your code to github
 
 ## Group information
 
 ### Question 1
+
 > **Enter the group number you signed up on <learn.inside.dtu.dk>**
 >
-> Answer:
+> Answer: MLOps 77
 
 Group 77
 
 ### Question 2
+
 > **Enter the study number for each member in the group**
 >
 > Example:
@@ -116,9 +117,10 @@ Group 77
 >
 > Answer:
 
-s232470, s232468, s232452, s233423, s237214
+s233423, s237214, s232470, s232468, s232452
 
 ### Question 3
+
 > **What framework did you choose to work with and did it help you complete the project?**
 >
 > Answer length: 100-200 words.
@@ -129,7 +131,7 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 3 fill here ---
+We used the Transformers package from the Huggingface group. To make our model we used ViTForImageClassification functionality from the transformers package. It created the model for fine-tuning from the already pre-trained model. For training, we used the Trainer and TrainingArguments functionality from the same package. As their name suggests the TrainingArguments was used to define training arguments like evaluation steps, number of training epochs, etc. The Trainer was used for training the model. Using this package helped us in getting introduced to them, but also took too much of our time. Having the pre-trained model was useful in not having to make our own, but figuring out how to fine-tune it, was as challenging.
 
 ## Coding environment
 
@@ -148,11 +150,19 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 4 fill here ---
+We used conda and pip to manage our dependencies in our project. Conda was used to create virtual environments with specific Python versions and pip to install packages in that environment. The list of dependencies was auto-generated using pipreqs command. To get a complete copy of our development environment, one would have to run the following commands (having conda and pip already installed on the device):
+```
+conda create –name myenv
+conda activate myenv
+pip install -r requirements.txt
+pip install -r requirements_dev.txt
+pip install -e .
+```
+To make sure that the requirements.txt file was regularly updated, each one of us would run the pipreqs command before pushing the code to github. The requirements_dev.txt file was manually updated.
 
 ### Question 5
 
-> **We expect that you initialized your project using the cookiecutter template. Explain the overall structure of your**
+> **We expect that you initialized your project using the 	. Explain the overall structure of your**
 > **code. Did you fill out every folder or only a subset?**
 >
 > Answer length: 100-200 words
@@ -163,7 +173,9 @@ s232470, s232468, s232452, s233423, s237214
 > *experiments.*
 > Answer:
 
---- question 5 fill here ---
+We initialized our project using a Cookiecutter template. From the Cookiecutter template, we populated the `src`, `data`, `tests`, `reports`, `dockerfiles`, and `models` folders. We omitted the `notebooks`, `references`, and `docs` folders as we did not utilize any Jupyter notebooks in our project. Additionally, we have no references to other projects nor specific documentation.
+
+We added a `config` folder containing configuration files for running our model and experiments. Within the `src` folder, you will find files dedicated to data processing, model construction, training, and prediction. The `data` folder includes DVC data files. The `reports` folder comprises the report for this course. The `dockerfiles` folder is utilized to store files used for building Docker images. Finally, the `models` folder serves as the repository for our pretrained models.
 
 ### Question 6
 
@@ -174,7 +186,7 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 6 fill here ---
+In this project, we have decided to implement good coding practices using Ruff and by employing pre-commit. The rules we have chosen to implement mostly involve checking for unnecessary whitespaces and tabs. Additionally, we have implemented checks to determine whether the imports are used or not. In large projects, there are many programmers who write code in different styles. With tools like Ruff, we ensure that the code is readable and easy to maintain. Another important benefit is that formatting helps avoid unnecessary merge conflicts.
 
 ## Version control
 
@@ -193,7 +205,7 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 7 fill here ---
+In total, we have implemented 12 tests. Primarily, we are testing data and the model, as these are the most critical parts of our project. Additionally, we are evaluating the training and predicting functionalities of the model. To be more precise, we have implemented tests for the following files: `test_model.py`, `train_model.py`, `predict_model.py`, `test_api.py` and `make_dataset.py`. The `test_process_data` test is ignored because it takes too long to run on each build.
 
 ### Question 8
 
@@ -208,7 +220,7 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 8 fill here ---
+The total code coverage is 87%, which includes all our source code.. We are close to achieving 100% coverage, providing us assurance that if someone were to introduce breaking changes, we have a high chance of detecting them. While having 100% coverage would mean that every line of code is executed at least once during tests, it does not imply that our code is bug-free, as not every scenario has been thoroughly tested. This also doesn't guarantee the coverage of all code paths, edge cases, or potential issues. When writing tests for our project, we should not solely focus on code coverage but also consider the effectiveness of our tests. This involves assessing how well they can detect possible errors.
 
 ### Question 9
 
@@ -223,7 +235,7 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 9 fill here ---
+While working on our project, we utilized branches and pull requests. The repository comprised two main branches: `main` and `develop`. The `main` branch served as the branch for a working product, commonly referred to as production, while the `develop` branch was dedicated to ongoing development. Each group member would create a new branch from `develop` when working on a specific part of the project. After completing the work on the code, the group member would initiate a pull request to merge their changes into the `develop` branch. To ensure the quality of the written code, we implemented checks such as requiring at least one person to review it, and ensuring that the pipeline was successful.
 
 ### Question 10
 
@@ -238,7 +250,7 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 10 fill here ---
+We used DVC in our project. It started out as a google drive based storage, but later on in the project when introducing GCP we switched to a GCP storage bucket. During the project we had trouble with the size of our dataset (200k images), DVC helped us because we had to change the way the dataset is formatted multiple times, each of these reformations would take some time to run on our PCs so having it be "in the cloud" helped with ease of use. Thankfully we did not need to revert back to "previous" versions of the data, but with a few different versions there was a chance we would have needed this functionality as well.
 
 ### Question 11
 
@@ -250,11 +262,11 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Example:
 > *We have organized our CI into 3 separate files: one for doing ..., one for running ... testing and one for running*
-> *... . In particular for our ..., we used ... .An example of a triggered workflow can be seen here: <weblink>*
+> *... . In particular for our ..., we used ... .An example of a triggered workflow can be seen here: `<weblink>`*
 >
 > Answer:
 
---- question 11 fill here ---
+Our CI consists of three workflow files, one for running tests, one for running pre-commit and one to allow PRs on main branch only from the develop branch. The test.yml workflow, as can be concluded from the name, is used to run tests on opening a PR to main and develop. It tests only one version of python and one OS, because all the code that is being used is used in containerized environments. We had some trouble with this workflow as our data is saved on DVC in a .zip format (because DVC was too slow with a lot of files). This was handled by installing the "unzip" package in the workflow container, and unziping newly pulled data everytime the workflow is ran. To be able to pull data on each run, we had to use gcloud-github-actions functions, we authenticate our runs by using a github repository secret containing the JSON key file that is generated by gcloud. An example of a triggered workflow can be seen [here](https://github.com/nmarg/Project-MLOperations/actions/runs/7553894489/job/20565629910). Adding to this we have also setup codecov, for making sure the test coverage of the project stays as high as possible. The pre-commit workflow, installs pre-commit and runs ruff format, if something stays unfixed the workflow fails and the PR to develop or main cannot be merged as it is set as a required check.
 
 ## Running code and tracking experiments
 
@@ -273,7 +285,13 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 12 fill here ---
+Our experiments are configured through config files. We use only one file; `config/model/model_config.yaml`. Inside this file it is possible to change different hyperparameters such as batch size, epochs,... and settings. This is read by [hydra](https://hydra.cc/docs/intro/) and provided as the configuration in the experiment.
+Running the experiment is very simple:
+* edit the config file to fit your experiment needs
+* run the script:
+```
+python src/train_model.py
+```
 
 ### Question 13
 
@@ -288,8 +306,10 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 13 fill here ---
-
+Inside the `config/model/model_config.yaml` there is a bool setting called `reproducible_experiment`. When set to `True`, the `seed` setting (also in the .yaml file) is set in the experiment, ensuring that the randomness is reproducible across multiple runs. All of the other hyperparameters are already provided in the `config.yaml`. Hydra automatically saves its configuration to `outputs/`, and then in subfolders by day and time. To rerun an experiment with the same hyperparameters, you would have to run the `train.py` file while providing hydra with the path to the saved configuration. The call would look like:
+```
+python src/train.py --config-path /path/to/your/outputs/YYYY-MM-DD/HH-MM-SS --config-name config.yaml
+```
 ### Question 14
 
 > **Upload 1 to 3 screenshots that show the experiments that you have done in W&B (or another experiment tracking**
@@ -305,7 +325,19 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 14 fill here ---
+This first screenshot represents how the different model configurations (size of test set, learning rate) turned out to perform.
+
+![image](https://github.com/nmarg/Project-MLOperations/assets/86132019/65cac82b-9370-4ac1-8c9e-051f201589b7)
+
+We are tracking different metrics, such as loss per step, loss changing in time etc.
+The following diagram shows the behaviour of all of our model prediction runs. Unfortunately, the Predicted variable is equal to 1 (meaning "Not attractive").
+If our model were to work properly, the Predicted variable should show around the average value of 0,5.
+
+![image](https://github.com/nmarg/Project-MLOperations/assets/86132019/ab2241de-7372-430b-ba51-e2996f2bd8bc)
+
+Also, the `prediction` variable for all 5000 test images is 0,0. That means that the model does not correctly predict any images labeled as "Attractive". Of course, the variable would come in handy, as the main measure of the model. Finally, we can conclude that the logging using Weights&Biases is setup and is useful for a proper model.
+
+Note: after two days of debugging why the model was not training well we scraped the model optimization and decided to focus on the operations part of the project.
 
 ### Question 15
 
@@ -316,11 +348,12 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Example:
 > *For our project we developed several images: one for training, inference and deployment. For example to run the*
-> *training docker image: `docker run trainer:latest lr=1e-3 batch_size=64`. Link to docker file: <weblink>*
+> *training docker image: `docker run trainer:latest lr=1e-3 batch_size=64`. Link to docker file: `<weblink>`*
 >
 > Answer:
 
---- question 15 fill here ---
+Docker was used to containerize two applications in relation to our model: the [trainer](https://github.com/nmarg/Project-MLOperations/blob/main/dockerfiles/train.dockerfile) and the [predict server](https://github.com/nmarg/Project-MLOperations/blob/main/dockerfiles/server.dockerfile). The `trainer` image runs model training on data stored in our cloud bucket, while the `predict server` is built with a model to be deployed. Neither of these images had arguments when running them, as they were built with a config file embedded inside. Even though this could be optimized for configurability, we decided to stay with the config file approach and instead focus on the pipeline around the images. Therefore, to run for example predict server, we'd call: `docker run -p 8080:8080 predict_server:latest`. We had experimented with setting the port with a `$PORT` variable for the server, but found no use for it as we would use a constant port in the cloud anyway.
+
 
 ### Question 16
 
@@ -335,7 +368,7 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 16 fill here ---
+The debugging method was dependent on the group member. Some used print statements throughout our code, while others employed the built-in Python debugger. In the event that a team member was unsuccessful in debugging, he/she would reach out to another team member for help. This approach allowed us to solve problems more quickly, practice good teamwork, and gain insight into other people’s tasks. We decided against profiling, as most of the code that could run slowly was taken from the transformers package. This makes our optimization significantly harder and more time-consuming. Furthermore, we believe that the rest of the written code runs well, as we have implemented the code review practice, ensuring that it performs at its fastest potential.
 
 ## Working in the cloud
 
@@ -352,7 +385,11 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 17 fill here ---
+We used the following services in Google Cloud Platform for our project:
+ - Cloud Storage: Bucket for training data and saved models
+ - Cloud Build: Triggering an automated CI/CD pipeline with Cloud Triggers that sets up an environment, builds our docker images, then deploys the predict server to Cloud Run, all set up in cloudbuild.yaml. Images are stored in the Container Registry.
+ - Cloud Run: Serverless deployment of our predict model based on the latest image built by Cloud Build.
+ - Vertex AI: VM for training the model from the image built by Cloud build.
 
 ### Question 18
 
@@ -367,7 +404,7 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 18 fill here ---
+We used the Cloud build to first build our containers in the cloud and then deploy them. For the server, we used the Cloud run, while for training we used Vertex AI. Cloud run was chosen for hosting our server and our trained model, as it scales automatically and stays deployed. Vertex AI on the other hand, was used as it provided us with a VM that spins up, trains the model, saves it and terminates, not wasting additional resources. Unfortunatelly we didn't get access to additional quotas in time, so we used the n1-standard-8 machine type without GPU acceleration.
 
 ### Question 19
 
@@ -376,7 +413,8 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 19 fill here ---
+![GCP Bucket](figures/Q19_1.png)
+![Data stored inside project-mloperations-data bucket](figures/Q19_2.png)
 
 ### Question 20
 
@@ -385,7 +423,7 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 20 fill here ---
+![GCP Container Registry](figures/Q20.png)
 
 ### Question 21
 
@@ -394,7 +432,7 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 21 fill here ---
+![GCP Cloud Build History](figures/Q21.png)
 
 ### Question 22
 
@@ -410,7 +448,7 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 22 fill here ---
+In addition to creating a local FastAPI server for our model, we managed to create an automated CD pipeline in the cloud, which works in the following way: every time there is a new push (or merge) to our main GitHub branch, a Google Cloud Trigger is invoked, that operates based on the instructions described in `cloudbuild/cloudbuild_server.yaml`. This, in turn, builds the FastAPI server into a Docker Image based on the new push into the codebase, pushes that image to the Google Container Registry, then creates a new deployment using Google Cloud Run based on the latest image. After the pipeline is finished, a prediction for an image saved locally may be requested in a terminal with the command `curl -F "data=@<imagename>.jpg" -POST https://predict-server-axvushlxya-ew.a.run.app/predict/` (this is the actual URL of our deployment).
 
 ### Question 23
 
@@ -425,7 +463,7 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 23 fill here ---
+We added monitoring for data drifting to the deployed model. When accessing the link `https://predict-server-axvushlxya-ew.a.run.app/data-drifting-report/` a report is generated by the `evidently` package that compares the reference data (the one the model was trained on) with the current data (the data being used on the deployed model). Since there are a limited amount of observations in the current data, drifting is detected on 3 out of the 4 columns, but this is expected.
 
 ### Question 24
 
@@ -439,7 +477,7 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 24 fill here ---
+For the project only the service account of one member was used. The total cost ended up being around $10, the reason for the low consumption is that we did not get the quota for a GPU in time so we only used CPUs. The service that used up most of the credits was taken up by Cloud storage (90%) and the rest was Cloud run and Vertex AI.
 
 ## Overall discussion of project
 
@@ -460,7 +498,9 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 25 fill here ---
+![Pipeline Overview](figures/Q25.png)
+
+The starting point of the diagram is our local setup, where we integrated Hydra, conda, pip, pre-commit (with ruff) and many more into our code. We added CI that runs tests and pre-commit upon opening a PR to develop or main. If there is a push to main we have CD that automatically builds the docker image for the deployed model server and hosts it on Cloud run. There is also a manual trigger on Cloud build for building the docker image for training a new model and running it in a Vertex AI VM, which can be accessed through the GCP console. Weights&Biases and Hydra are used in the training process. As can be seen from the diagram, an external user can clone our source code and query our deployed model server. Inside the main README of the project there is a guide on how to query the server correctly.
 
 ### Question 26
 
@@ -474,7 +514,12 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 26 fill here ---
+* DVC \
+  We ran into a lot of troubles while setting up DVC and using the cloud. As DVC works with git, when some of the files tracked by DVC were changed from the cloud (these changes were not tracked by git), we ran into a lot of 404 File Not Found errors because the versions provided in our project did not match those found in the cloud. We decided to remove those files from DVC, and only access them through cloud.
+* hugging face transformers library \
+  Our first plan was to make multilabel inference on 40 attributes, but we ran into a lot of problems with the library. The documentation on the multilabel problems for images was almost non-existant and so we were forced to move to a single label prediction.
+* python imports\
+  Python imports turned out to be harder to implement across multiple enviroments than expected. It was difficult to allign the paths for tests, local training and deployment and containerized applications. For the containers a new path (project path) had to be added to the python path ENV in order for the app to work.
 
 ### Question 27
 
@@ -491,4 +536,4 @@ s232470, s232468, s232452, s233423, s237214
 >
 > Answer:
 
---- question 27 fill here ---
+Student s233423 was in charge of processing the original data, Cloud run model deployment, meeting organization. Student s237214 was in charge of Weights&Biases logging and monitoring. Student s232470 was in charge of setting up DVC, Cloud build, CI. Student s232468 was in charge of testing, CI and model training (trying really hard). Student s232452 was in charge of Vertex AI, FastAPI server, model training and IT support. All members contributed to the report, by answering the questions related to the parts they did. We also contributed to helping each other whenever the need for it arose <3.
