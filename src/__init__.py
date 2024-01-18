@@ -1,3 +1,2 @@
-from src.data.make_dataset import CelebADataModule, CustomImageDataset
-from src.predict_model import predict
-from src.server.main import app
+from src.data.make_dataset import CelebADataModule
+from src.models.model import make_model
