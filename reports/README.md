@@ -56,16 +56,16 @@ end of the project.
 * [X] Fill out the `make_dataset.py` file such that it downloads whatever data you need and
 * [X] Add a model file and a training script and get that running
 * [X] Remember to fill out the `requirements.txt` file with whatever dependencies that you are using
-* [ ] Remember to comply with good coding practices (`pep8`) while doing the project
+* [X] Remember to comply with good coding practices (`pep8`) while doing the project
 * [X] Do a bit of code typing and remember to document essential parts of your code
 * [X] Setup version control for your data or part of your data
 * [X] Construct one or multiple docker files for your code
 * [X] Build the docker files locally and make sure they work as intended
-* [ ] Write one or multiple configurations files for your experiments
+* [X] Write one or multiple configurations files for your experiments
 * [X] Used Hydra to load the configurations and manage your hyperparameters
 * [ ] When you have something that works somewhat, remember at some point to to some profiling and see if
   you can optimize your code
-* [ ] Use Weights & Biases to log training progress and other important metrics/artifacts in your code. Additionally,
+* [X] Use Weights & Biases to log training progress and other important metrics/artifacts in your code. Additionally,
   consider running a hyperparameter optimization sweep.
 * [ ] Use Pytorch-lightning (if applicable) to reduce the amount of boilerplate in your code
 
@@ -77,14 +77,14 @@ end of the project.
 * [X] Get some continuous integration running on the github repository
 * [X] Create a data storage in GCP Bucket for you data and preferable link this with your data version control setup
 * [X] Create a trigger workflow for automatically building your docker images
-* [ ] Get your model training in GCP using either the Engine or Vertex AI
+* [X] Get your model training in GCP using either the Engine or Vertex AI
 * [X] Create a FastAPI application that can do inference using your model
 * [ ] If applicable, consider deploying the model locally using torchserve
 * [X] Deploy your model in GCP using either Functions or Run as the backend
 
 ### Week 3
 
-* [ ] Check how robust your model is towards data drifting
+* [X] Check how robust your model is towards data drifting
 * [ ] Setup monitoring for the system telemetry of your deployed model
 * [ ] Setup monitoring for the performance of your deployed model
 * [ ] If applicable, play around with distributed data loading
@@ -93,9 +93,9 @@ end of the project.
 
 ### Additional
 
-* [ ] Revisit your initial project description. Did the project turn out as you wanted?
-* [ ] Make sure all group members have a understanding about all parts of the project
-* [ ] Uploaded all your code to github
+* [X] Revisit your initial project description. Did the project turn out as you wanted?
+* [X] Make sure all group members have a understanding about all parts of the project
+* [X] Uploaded all your code to github
 
 ## Group information
 
@@ -281,7 +281,13 @@ Our CI consists of three workflow files, one for running tests, one for running 
 >
 > Answer:
 
---- question 12 fill here ---
+Our experiments are configured through config files. We use only one file; `config/model/model_config.yaml`. Inside this file it is possible to change different hyperparameters such as batch size, epochs,... and settings. This is read by [hydra](https://hydra.cc/docs/intro/) and provided as the configuration in the experiment.
+Running the experiment is very simple:
+* edit the config file to fit your experiment needs
+* run the script:
+```
+python src/train_model.py
+```
 
 ### Question 13
 
@@ -296,8 +302,10 @@ Our CI consists of three workflow files, one for running tests, one for running 
 >
 > Answer:
 
---- question 13 fill here ---
-
+Inside the `config/model/model_config.yaml` there is a bool setting called `reproducible_experiment`. When set to `True`, the `seed` setting (also in the .yaml file) is set in the experiment, ensuring that the randomness is reproducible across multiple runs. All of the other hyperparameters are already provided in the `config.yaml`. Hydra automatically saves its configuration to `outputs/`, and then in subfolders by day and time. To rerun an experiment with the same hyperparameters, you would have to run the `train.py` file while providing hydra with the path to the saved configuration. The call would look like:
+```
+python src/train.py --config-path /path/to/your/outputs/YYYY-MM-DD/HH-MM-SS --config-name config.yaml
+```
 ### Question 14
 
 > **Upload 1 to 3 screenshots that show the experiments that you have done in W&B (or another experiment tracking**
@@ -380,7 +388,7 @@ We used the following services in Google Cloud Platform for our project:
 >
 > Answer:
 
---- question 18 fill here ---
+We used the Cloud build to first build our containers in the cloud and then deploy them. For the server, we used the Compute engine, while for training we used Vertex AI. Compute engine was chosen for hosting our server and our trained model, as it scales automatically and stays deployed. Vertex AI on the other hand, was used as it provided us with a VM that spins up, trains the model, saves it and terminates, not wasting additional resources. Unfortunatelly we didn't get access to additional quotas in time, so we used the n1-standard-8 machine type without GPU acceleration.
 
 ### Question 19
 
@@ -488,8 +496,12 @@ In addition to creating a local FastAPI server for our model, we managed to crea
 >
 > Answer:
 
---- question 26 fill here ---
-
+* DVC \
+  We ran into a lot of troubles while setting up DVC and using the cloud. As DVC works with git, when some of the files tracked by DVC were changed from the cloud (these changes were not tracked by git), we ran into a lot of 404 File Not Found errors because the versions provided in our project did not match those found in the cloud. We decided to remove those files from DVC, and only access them through cloud.
+* hugging face transformers library \
+  Our first plan was to make multilabel inference on 40 attributes, but we ran into a lot of problems with the library. The documentation on the multilabel problems for images was almost non-existant and so we were forced to move to a single label prediction.
+* python imports\
+  Python imports turned out to be harder to implement across multiple enviroments than expected. It was difficult to allign the paths for tests, local training and deployment and containerized applications. For the containers a new path (project path) had to be added to the python path ENV in order for the app to work.
 ### Question 27
 
 > **State the individual contributions of each team member. This is required information from DTU, because we need to**

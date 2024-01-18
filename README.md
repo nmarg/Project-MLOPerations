@@ -28,11 +28,28 @@ We used [PyTorch](https://pytorch.org/) for the development. More precisely, we 
 
 ## Running locally
 
-TODO
+To run the model locally you will need to fetch the model from the Google Cloud Platform. You will need to contact nmarg@gmail.com to give you access to the Google Bucket.
 
-## Running in the cloud
+After you have downloaded the model (and placed it under `models/model0`) you have to build the Docker image:
+```
+docker build -f dockerfiles/server.dockerfile -t server_model_image .
+```
+And then run the container:
+```
+docker run --name server server_model_image:latest
+```
 
-TODO
+You can access the server:
+
+```
+curl -X 'POST' \
+        'http://localhost:8080/predict/' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: multipart/form-data' \
+        -F 'data=@/path/to/your/image.jpg;type=image/jpeg'
+```
+
+Which will give you back the model's inference on the provided image.
 
 ## Project structure
 
