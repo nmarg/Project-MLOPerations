@@ -1,4 +1,5 @@
 docs/site/
+data/drifting
 data/processed/
 data/raw/
 data/testing/
@@ -184,3 +185,5 @@ cython_debug/
 
 # hydra
 /outputs
+
+project-mloperations-cf9dafc8c431.json

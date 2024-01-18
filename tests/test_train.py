@@ -1,7 +1,8 @@
-from src.train_model import train
-from src.models.model import make_model
-from omegaconf import OmegaConf
 import transformers
+from omegaconf import OmegaConf
+
+from src.models.model import make_model
+from src.train_model import train
 
 
 def mock_cfg():
