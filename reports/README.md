@@ -498,7 +498,7 @@ For the project only the service account of one member was used. The total cost 
 >
 > Answer:
 
---- question 25 fill here ---
+The starting point of the diagram is our local setup, where we integrated Hydra, conda, pip, pre-commit (with ruff) and many more into our code. We added CI that runs tests and pre-commit upon opening a PR to develop or main. If there is a push to main we have CD that automatically builds the docker image for the deployed model server and hosts it on Cloud run. There is also a manual trigger on Cloud build for building the docker image for training a new model and running it in a Vertex AI VM, which can be accessed through the GCP console. Weights&Biases and Hydra are used in the training process. As can be seen from the diagram, an external user can clone our source code and query our deployed model server. Inside the main README of the project there is a guide on how to query the server correctly.
 
 ### Question 26
 
