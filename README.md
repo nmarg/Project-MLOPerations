@@ -1,10 +1,10 @@
 # Machine Learning Operations project
 
-Alex Belai s233423 `<br/>`
-Jan Ljubas s237214 `<br/>`
-Noa Margeta s232470 `<br/>`
-Ana Marija Pavičić s232468 `<br/>`
-Filip Penzar s232452 `<br/>`
+Alex Belai s233423 \
+Jan Ljubas s237214 \
+Noa Margeta s232470 \
+Ana Marija Pavičić s232468 \
+Filip Penzar s232452
 
 ### Have you ever wondered if machines find you attractive?
 
