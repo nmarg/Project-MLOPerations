@@ -15,12 +15,12 @@ COPY requirements_dev.txt requirements_dev.txt
 COPY pyproject.toml pyproject.toml
 COPY src/ src/
 COPY data/testing data/testing
-COPY data/drifting data/drifting
 COPY models/model0 models/model0
 
 WORKDIR /
 RUN pip install -r requirements.txt
 RUN pip install -r requirements_dev.txt
 RUN pip install . --no-deps --no-cache-dir
+RUN gsutil cp gs://project-mloperations-data/data/drifting/current_data.csv data/drifting/current_data.csv
 
 ENTRYPOINT exec uvicorn src.server.main:app --port 8080 --host 0.0.0.0
