@@ -320,23 +320,19 @@ python src/train.py --config-path /path/to/your/outputs/YYYY-MM-DD/HH-MM-SS --co
 > *As seen in the second image we are also tracking ... and ...*
 >
 > Answer:
-> > Answer:
-> This first screenshot represents how the different model configurations (size of test set, learning rate) turned out to perform.
-> ![image](https://github.com/nmarg/Project-MLOperations/assets/86132019/65cac82b-9370-4ac1-8c9e-051f201589b7)
->
-> We are tracking different metrics, such as loss per step, loss changing in time etc.
->
-> The following diagram shows the behaviour of all of our model prediction runs. Unfortunately, the Predicted variable is equal to 1 (meaning "Not attractive").
-> If our model were to work properly, the Predicted variable should show around the average value of 0,5.
->
-> ![image](https://github.com/nmarg/Project-MLOperations/assets/86132019/ab2241de-7372-430b-ba51-e2996f2bd8bc)
->
-> Also, the `prediction` variable for all 5000 test images is 0,0. That means that the model correctly predict any images labeled as "Attractive". Of course, the variable would come in handy, as the main measure of the model.
->
-> Finally, we can conclude that the logging using Weights&Biases is setup and is useful for a proper model.
-> 
 
---- question 14 fill here ---
+This first screenshot represents how the different model configurations (size of test set, learning rate) turned out to perform.
+
+![image](https://github.com/nmarg/Project-MLOperations/assets/86132019/65cac82b-9370-4ac1-8c9e-051f201589b7)
+
+We are tracking different metrics, such as loss per step, loss changing in time etc.
+The following diagram shows the behaviour of all of our model prediction runs. Unfortunately, the Predicted variable is equal to 1 (meaning "Not attractive").
+If our model were to work properly, the Predicted variable should show around the average value of 0,5.
+
+![image](https://github.com/nmarg/Project-MLOperations/assets/86132019/ab2241de-7372-430b-ba51-e2996f2bd8bc)
+
+Also, the `prediction` variable for all 5000 test images is 0,0. That means that the model correctly predict any images labeled as "Attractive". Of course, the variable would come in handy, as the main measure of the model. Finally, we can conclude that the logging using Weights&Biases is setup and is useful for a proper model.
+
 
 ### Question 15
 
