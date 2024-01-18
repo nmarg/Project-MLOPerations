@@ -16,8 +16,8 @@ COPY config/ config/
 
 WORKDIR /
 RUN mkdir training_outputs
-RUN --mount=type=cache,target=~/pip/.cache pip install -r requirements.txt
-RUN --mount=type=cache,target=~/pip/.cache pip install -r requirements_dev.txt
+RUN pip install -r requirements.txt
+RUN pip install -r requirements_dev.txt
 RUN pip install . --no-deps --no-cache-dir
 
 CMD ["python", "-u", "src/train_model.py", "cloud=True"]
