@@ -3,12 +3,12 @@ outs:
   path: drifting
   files:
   - relpath: current_data.csv
-    md5: 65a1536789ae53abdda3dbb72134de7a
+    md5: 5f2eadeb861303c6a82c409ffffc0e31
     size: 130
     cloud:
       remote_storage:
         etag: 08aef4d1dddbe683031001
-        version_id: '1705573317114414'
+        version_id: '1705588804549861'
   - relpath: reference_data.csv
     md5: 8314d8dd0a98a98fe88f18df25a8f9c9
     size: 280427
