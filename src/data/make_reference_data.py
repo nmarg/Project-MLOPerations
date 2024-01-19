@@ -1,8 +1,8 @@
-import numpy as np
-
-from pathlib import Path
-from PIL import Image, ImageStat
 from csv import writer
+from pathlib import Path
+
+import numpy as np
+from PIL import Image, ImageStat
 
 
 def calculate_brightness(image):

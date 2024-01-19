@@ -85,7 +85,7 @@ end of the project.
 ### Week 3
 
 * [X] Check how robust your model is towards data drifting
-* [ ] Setup monitoring for the system telemetry of your deployed model
+* [X] Setup monitoring for the system telemetry of your deployed model
 * [ ] Setup monitoring for the performance of your deployed model
 * [ ] If applicable, play around with distributed data loading
 * [ ] If applicable, play around with distributed model training

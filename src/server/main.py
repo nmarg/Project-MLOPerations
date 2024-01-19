@@ -1,18 +1,19 @@
-import pandas as pd
-
+from csv import writer
+from datetime import datetime
 from http import HTTPStatus
 from io import BytesIO
-from csv import writer
-from fastapi import FastAPI, File, UploadFile, BackgroundTasks
+
+import pandas as pd
+from evidently.metric_preset import DataDriftPreset, DataQualityPreset
+from evidently.report import Report
+from fastapi import BackgroundTasks, FastAPI, File, UploadFile
 from fastapi.responses import HTMLResponse
+from google.cloud import storage
 from PIL import Image
 from transformers import ViTForImageClassification, ViTImageProcessor
-from datetime import datetime
-from src.predict_model import predict
+
 from src.data.make_reference_data import calculate_image_params
-from google.cloud import storage
-from evidently.report import Report
-from evidently.metric_preset import DataDriftPreset, DataQualityPreset
+from src.predict_model import predict
 
 app = FastAPI()
 

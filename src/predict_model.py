@@ -6,14 +6,13 @@ from pathlib import Path
 
 import pandas as pd
 import torch
+import wandb
 import yaml
 from PIL import Image
 from rich.logging import RichHandler
 from sklearn.metrics import precision_score
 from transformers import ViTForImageClassification, ViTImageProcessor
 from transformers.image_processing_utils import BatchFeature
-
-import wandb
 
 PROJECT_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)))
 MODEL_PATH = os.path.join(PROJECT_DIR, "models", "model0")
@@ -72,8 +71,6 @@ logging_config = {  # 4 parts: version, formatters, handlers, root
 logging.config.dictConfig(logging_config)
 logger = logging.getLogger(__name__)
 logger.root.handlers[0] = RichHandler(markup=True)  # set rich handler
-
-
 
 
 def transform_image(image_path: str, processor: ViTImageProcessor) -> BatchFeature:
