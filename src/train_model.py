@@ -3,10 +3,10 @@ import os
 import evaluate
 import hydra
 import torch
+import wandb
 from datasets import DatasetDict
 from transformers import Trainer, TrainingArguments, ViTImageProcessor, set_seed
 
-import wandb
 from src.data.make_dataset import CelebADataModule
 from src.models.model import make_model
 

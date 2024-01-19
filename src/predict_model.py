@@ -2,18 +2,17 @@ import logging
 import logging.config
 import os
 import sys
-
 from pathlib import Path
 
 import pandas as pd
 import torch
+import wandb
 import yaml
 from PIL import Image
+from rich.logging import RichHandler
 from sklearn.metrics import precision_score
 from transformers import ViTForImageClassification, ViTImageProcessor
 from transformers.image_processing_utils import BatchFeature
-
-import wandb
 
 PROJECT_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)))
 MODEL_PATH = os.path.join(PROJECT_DIR, "models", "model0")
@@ -68,9 +67,10 @@ logging_config = {  # 4 parts: version, formatters, handlers, root
     },
 }
 
-
 # Apply the logging configuration
 logging.config.dictConfig(logging_config)
+logger = logging.getLogger(__name__)
+logger.root.handlers[0] = RichHandler(markup=True)  # set rich handler
 
 
 def transform_image(image_path: str, processor: ViTImageProcessor) -> BatchFeature:
@@ -82,7 +82,7 @@ def transform_image(image_path: str, processor: ViTImageProcessor) -> BatchFeatu
         image_tensor = processor(image, return_tensors="pt")
         return image_tensor
     except Exception as e:
-        logging.error(f"An error in transforming the image {image_path}: {e}")
+        logger.error(f"An error in transforming the image {image_path}: {e}")
         raise
 
 
@@ -97,7 +97,7 @@ def predict(model: torch.nn.Module, image: BatchFeature) -> str:
             attractive = (output > 0.5)[0, 0]
         return "Attractive" if attractive else "Not attractive"
     except Exception as e:
-        logging.error(f"Error in prediction: {e}")
+        logger.error(f"Error in prediction: {e}")
         raise
 
 
@@ -123,7 +123,7 @@ def load_test_data(test_images_directory, labels_path, light_weight) -> tuple[li
             images.append(image_path)
         except FileNotFoundError:
             log_message = f"File not found: {image_path}"
-            print(log_message)  # log as error
+            logger.info(f"Something's wrong with loading images. {log_message}")
             wandb.log({"error": log_message})  # also to wandb
             continue
 
